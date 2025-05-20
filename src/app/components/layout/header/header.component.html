@@ -1,0 +1,70 @@
+<header class="bg-gradient-to-r from-purple-700 via-purple-500 to-pink-500 text-white shadow-lg">
+  <div class="container mx-auto px-4 py-3">
+    <div class="flex justify-between items-center">
+      <div class="flex items-center space-x-4">
+        <!-- Logo -->
+        <div class="cursor-pointer" (click)="navigateTo('home')">
+          <h1 class="font-bold text-2xl hover:text-yellow-300 transition-colors duration-200">CardMarket</h1>
+        </div>
+
+        <!-- Desktop Navigation -->
+        <nav class="hidden md:flex items-center space-x-6">
+          <a class="hover:text-yellow-300 font-medium cursor-pointer transition-colors duration-200 border-b-2 border-transparent hover:border-yellow-300 pb-1"
+            (click)="navigateTo('home')">Inicio</a>
+          <a class="hover:text-yellow-300 font-medium cursor-pointer transition-colors duration-200 border-b-2 border-transparent hover:border-yellow-300 pb-1"
+            (click)="navigateTo('cards')">Cartas</a>
+          <a class="hover:text-yellow-300 font-medium cursor-pointer transition-colors duration-200 border-b-2 border-transparent hover:border-yellow-300 pb-1"
+            (click)="navigateTo('collections')">Colecciones</a>
+          <a class="hover:text-yellow-300 font-medium cursor-pointer transition-colors duration-200 border-b-2 border-transparent hover:border-yellow-300 pb-1"
+            (click)="navigateTo('events')">Eventos</a>
+        </nav>
+      </div>
+
+      <!-- Auth Buttons and Mobile Menu Toggle -->
+      <div class="flex items-center space-x-4">
+        <!-- Mobile Menu Button -->
+        <button class="md:hidden text-white focus:outline-none"
+          (click)="toggleMobileMenu()">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+          </svg>
+        </button>
+
+        <!-- Auth Buttons (Hidden on small screens) -->
+        <div class="hidden sm:flex items-center space-x-4">
+          <button
+            class="bg-yellow-400 hover:bg-yellow-300 text-purple-900 px-4 py-2 rounded-lg font-semibold shadow-md hover:shadow-lg transition-colors duration-200 cursor-pointer"
+            (click)="navigateTo('login')">
+            Iniciar Sesión
+          </button>
+          <button
+            class="border-2 border-yellow-400 text-yellow-400 px-4 py-2 rounded-lg font-semibold hover:bg-yellow-400 hover:text-purple-900 shadow-md hover:shadow-lg transition-colors duration-200 cursor-pointer"
+            (click)="navigateTo('register')">
+            Registro
+          </button>
+        </div>
+        
+        <!-- Single Auth Button (Only on xs screens) -->
+        <button
+          class="sm:hidden bg-yellow-400 hover:bg-yellow-300 text-purple-900 px-3 py-1 rounded-lg font-medium shadow-md hover:shadow-lg transition-colors duration-200 cursor-pointer"
+          (click)="navigateTo('login')">
+          Acceder
+        </button>
+      </div>
+    </div>
+    
+    <!-- Mobile Navigation Menu -->
+    <div *ngIf="mobileMenuOpen" class="md:hidden py-3 mt-2">
+      <nav class="flex flex-col space-y-3">
+        <a class="hover:text-yellow-300 font-medium cursor-pointer transition-colors duration-200 py-2 border-b border-purple-400"
+          (click)="navigateTo('home'); toggleMobileMenu()">Inicio</a>
+        <a class="hover:text-yellow-300 font-medium cursor-pointer transition-colors duration-200 py-2 border-b border-purple-400"
+          (click)="navigateTo('cards'); toggleMobileMenu()">Cartas</a>
+        <a class="hover:text-yellow-300 font-medium cursor-pointer transition-colors duration-200 py-2 border-b border-purple-400"
+          (click)="navigateTo('collections'); toggleMobileMenu()">Colecciones</a>
+        <a class="hover:text-yellow-300 font-medium cursor-pointer transition-colors duration-200 py-2 border-b border-purple-400"
+          (click)="navigateTo('events'); toggleMobileMenu()">Eventos</a>
+      </nav>
+    </div>
+  </div>
+</header>
