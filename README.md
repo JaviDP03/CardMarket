@@ -1,59 +1,89 @@
 # CardMarket
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.12.
+Repositorio del frontend del proyecto final de 2º DAW
 
-## Development server
+## 🚀 Tecnologías principales
+[![Angular](https://img.shields.io/badge/Angular-19-DD0031?logo=angular&logoColor=white)](https://angular.io/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.7.3-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.1.7-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![pnpm](https://img.shields.io/badge/pnpm-10.11.0-222222?logo=pnpm&logoColor=yellow)](https://pnpm.io/)
+[![Node.js](https://img.shields.io/badge/Node.js-22.15.0-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
 
-To start a local development server, run:
+## 📦 Dependencias principales
+- Vite (empaquetador y servidor de desarrollo)
+- TypeScript
+- Tailwind CSS
 
-```bash
-ng serve
-```
+## ⚙️ Configuración y despliegue
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+### 0. Instala Node.js y pnpm
 
-## Code scaffolding
+Descarga e instala Node.js desde [nodejs.org](https://nodejs.org/).
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
+Luego instala pnpm globalmente con el siguiente comando:
 
 ```bash
-ng build
+corepack enable pnpm
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+### 1. Clona el repositorio
 
 ```bash
-ng test
+git clone https://github.com/JaviDP03/CardMarket.git
+cd CardMarket
 ```
 
-## Running end-to-end tests
+### 2. Instala las dependencias
 
-For end-to-end (e2e) testing, run:
+Se recomienda usar pnpm:
 
 ```bash
-ng e2e
+pnpm install
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+O con npm:
 
-## Additional Resources
+```bash
+npm install
+```
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+### 3. Compila el proyecto
+
+Para compilar el proyecto en modo producción:
+
+```bash
+pnpm build
+```
+
+Los archivos generados estarán en la carpeta `dist/`.
+
+## 🚀 Despliegue
+
+### Despliegue en servidor de desarrollo (recomendado para desarrollo)
+
+Para iniciar el servidor de desarrollo y ver los cambios en tiempo real:
+
+```bash
+pnpm start
+```
+
+Abre [http://localhost:4200](http://localhost:4200) en tu navegador.
+
+### Despliegue en producción
+
+Puedes desplegar el contenido de la carpeta `dist/` en cualquier servidor web estático (Nginx, Apache, etc) o en la nube (Vercel, Netlify, Firebase Hosting, etc).
+
+#### Ejemplo de despliegue local con http-server:
+
+```bash
+pnpm install -g http-server
+http-server dist/card-market
+```
+
+Abre tu navegador en [http://localhost:8080](http://localhost:8080).
+
+## 📖 Documentación
+
+- [Documentación Angular CLI](https://angular.dev/tools/cli)
+- [Documentación Tailwind CSS](https://tailwindcss.com/docs/installation)
+---
