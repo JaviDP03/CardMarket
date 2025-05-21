@@ -3,11 +3,11 @@
 Repositorio del frontend del proyecto final de 2º DAW
 
 ## 🚀 Tecnologías principales
+[![Node.js](https://img.shields.io/badge/Node.js-22-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
 [![Angular](https://img.shields.io/badge/Angular-19-DD0031?logo=angular&logoColor=white)](https://angular.io/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.7.3-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.1.7-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.1-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
 [![pnpm](https://img.shields.io/badge/pnpm-10.11.0-222222?logo=pnpm&logoColor=yellow)](https://pnpm.io/)
-[![Node.js](https://img.shields.io/badge/Node.js-22.15.0-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
 
 ## 📦 Dependencias principales
 - Vite (empaquetador y servidor de desarrollo)

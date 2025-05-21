@@ -1,0 +1,124 @@
+<div class="bg-gray-100 min-h-screen py-8">
+  <div class="max-w-4xl mx-auto px-4">
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+      <!-- Header with background -->
+      <div class="bg-gradient-to-r from-blue-500 to-purple-600 h-32 flex items-center p-6">
+        <h1 class="text-3xl font-bold text-white">Mi Perfil</h1>
+      </div>
+      
+      <!-- Loading indicator -->
+      <div *ngIf="isLoading" class="flex justify-center items-center p-12">
+        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+      
+      <!-- User not logged in message -->
+      <div *ngIf="!isLoading && !currentUser" class="p-8 text-center">
+        <p class="text-lg text-gray-600">No has iniciado sesión. Por favor, inicia sesión para ver tu perfil.</p>
+      </div>
+
+      <!-- User profile content -->
+      <div *ngIf="!isLoading && currentUser" class="p-8">
+        <!-- User avatar and basic info -->
+        <div class="flex flex-col md:flex-row items-center md:items-start gap-6">
+          <div class="flex-shrink-0">
+            <div class="h-32 w-32 rounded-full bg-gray-300 flex items-center justify-center text-3xl text-gray-600 font-bold border-4 border-blue-500">
+              {{ currentUser.nombreUsuario }}
+            </div>
+          </div>
+          
+          <div class="flex-grow">
+            <h2 class="text-2xl font-bold text-gray-800">{{ currentUser.nombreUsuario }}</h2>
+            <p class="text-md text-gray-600 mt-1">{{ currentUser.email }}</p>
+            <div class="mt-2">
+              <span class="px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                {{ isAdmin ? 'Administrador' : 'Usuario' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile information -->
+        <div class="mt-8 border-t pt-6">
+          <h3 class="text-xl font-semibold text-gray-800 mb-4">Información Personal</h3>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-gray-50 p-4 rounded-md">
+              <p class="text-sm text-gray-500">Nombre completo</p>
+              <p class="text-lg font-medium">{{ currentUser.nombre }} {{ currentUser.apellido }}</p>
+            </div>
+
+            <!-- Usuario specific fields -->
+            <ng-container *ngIf="!isAdmin && regularUser">
+              <div class="bg-gray-50 p-4 rounded-md">
+                <p class="text-sm text-gray-500">Teléfono</p>
+                <p class="text-lg font-medium">{{ regularUser.telefono || 'No especificado' }}</p>
+              </div>
+              
+              <div class="bg-gray-50 p-4 rounded-md">
+                <p class="text-sm text-gray-500">Fecha de nacimiento</p>
+                <p class="text-lg font-medium" *ngIf="regularUser.fechaNacimiento; else noFecha">
+                  {{ regularUser.fechaNacimiento | date:'dd/MM/yyyy' }}
+                </p>
+                <ng-template #noFecha>
+                  <p class="text-lg font-medium">No disponible</p>
+                </ng-template>
+              </div>
+              
+              <div class="bg-gray-50 p-4 rounded-md">
+                <p class="text-sm text-gray-500">Direcciones</p>
+                <p class="text-lg font-medium">{{ regularUser.direcciones.length || 0 }} direcciones registradas</p>
+              </div>
+              
+              <div class="bg-gray-50 p-4 rounded-md">
+                <p class="text-sm text-gray-500">Pedidos realizados</p>
+                <p class="text-lg font-medium">{{ regularUser.pedidos.length || 0 }} pedidos</p>
+              </div>
+            </ng-container>
+
+            <!-- Admin specific fields -->
+            <ng-container *ngIf="isAdmin && adminUser">        
+              <div class="bg-gray-50 p-4 rounded-md">
+                <p class="text-sm text-gray-500">Tipo de cuenta</p>
+                <p class="text-lg font-medium">Administrador</p>
+              </div>
+            </ng-container>
+            
+            <div class="bg-gray-50 p-4 rounded-md">
+              <p class="text-sm text-gray-500">Email</p>
+              <p class="text-lg font-medium">{{ currentUser.email }}</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Additional admin section -->
+        <div *ngIf="isAdmin" class="mt-8 border-t pt-6">
+          <h3 class="text-xl font-semibold text-gray-800 mb-4">Panel de Administrador</h3>
+          <div class="bg-blue-50 p-6 rounded-lg">
+            <p class="text-gray-700 mb-4">Como administrador, tienes acceso a funciones adicionales del sistema:</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <button class="bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2">
+                <span>Gestionar Usuarios</span>
+              </button>
+              <button class="bg-purple-600 hover:bg-purple-700 text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2">
+                <span>Gestionar Productos</span>
+              </button>
+              <button class="bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2">
+                <span>Ver Estadísticas</span>
+              </button>
+              <button class="bg-yellow-600 hover:bg-yellow-700 text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2">
+                <span>Configuración Sistema</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Edit profile button -->
+        <div class="mt-8 flex justify-end">
+          <button class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-md transition duration-200">
+            Editar Perfil
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

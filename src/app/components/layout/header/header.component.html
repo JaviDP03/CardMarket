@@ -30,8 +30,48 @@
           </svg>
         </button>
 
-        <!-- Auth Buttons (Hidden on small screens) -->
-        <div class="hidden sm:flex items-center space-x-4">
+        <!-- User is logged in -->
+        <div *ngIf="isLoggedIn" class="flex items-center space-x-4">
+          <!-- Shopping Cart -->
+          <div class="relative cursor-pointer" (click)="navigateTo('cart')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white hover:text-yellow-300 transition-colors duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            <span *ngIf="cartItemCount > 0" class="absolute -top-2 -right-2 bg-yellow-400 text-purple-900 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+              {{cartItemCount}}
+            </span>
+          </div>
+          
+          <!-- User Profile Dropdown -->
+          <div class="relative">
+            <div class="flex items-center space-x-2 cursor-pointer" (click)="toggleProfileDropdown()">
+              <div class="w-8 h-8 rounded-full bg-yellow-400 flex items-center justify-center text-purple-900 font-bold">
+                {{userInitials}}
+              </div>
+              <span class="hidden sm:inline-block hover:text-yellow-300 transition-colors duration-200">{{username}}</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+            
+            <!-- Dropdown Menu -->
+            <div *ngIf="profileDropdownOpen" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-xl z-20">
+              <div class="py-1">
+                <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-100 cursor-pointer"
+                  (click)="navigateTo('perfil'); toggleProfileDropdown()">
+                  Mi Perfil
+                </a>
+                <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-100 cursor-pointer"
+                  (click)="logout(); toggleProfileDropdown()">
+                  Cerrar Sesión
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Auth Buttons (Hidden on small screens when not logged in) -->
+        <div *ngIf="!isLoggedIn" class="hidden sm:flex items-center space-x-4">
           <button
             class="bg-yellow-400 hover:bg-yellow-300 text-purple-900 px-4 py-2 rounded-lg font-semibold shadow-md hover:shadow-lg transition-colors duration-200 cursor-pointer"
             (click)="navigateTo('login')">
@@ -39,13 +79,13 @@
           </button>
           <button
             class="border-2 border-yellow-400 text-yellow-400 px-4 py-2 rounded-lg font-semibold hover:bg-yellow-400 hover:text-purple-900 shadow-md hover:shadow-lg transition-colors duration-200 cursor-pointer"
-            (click)="navigateTo('register')">
+            (click)="navigateTo('registro')">
             Registro
           </button>
         </div>
         
-        <!-- Single Auth Button (Only on xs screens) -->
-        <button
+        <!-- Single Auth Button (Only on xs screens when not logged in) -->
+        <button *ngIf="!isLoggedIn"
           class="sm:hidden bg-yellow-400 hover:bg-yellow-300 text-purple-900 px-3 py-1 rounded-lg font-medium shadow-md hover:shadow-lg transition-colors duration-200 cursor-pointer"
           (click)="navigateTo('login')">
           Acceder
@@ -64,6 +104,16 @@
           (click)="navigateTo('collections'); toggleMobileMenu()">Colecciones</a>
         <a class="hover:text-yellow-300 font-medium cursor-pointer transition-colors duration-200 py-2 border-b border-purple-400"
           (click)="navigateTo('events'); toggleMobileMenu()">Eventos</a>
+        
+        <!-- Auth options for mobile menu when user is logged in -->
+        <div *ngIf="isLoggedIn" class="pt-2 border-t border-purple-400">
+          <a class="hover:text-yellow-300 font-medium cursor-pointer transition-colors duration-200 py-2 border-b border-purple-400"
+            (click)="navigateTo('perfil'); toggleMobileMenu()">Mi Perfil</a>
+          <a class="hover:text-yellow-300 font-medium cursor-pointer transition-colors duration-200 py-2 border-b border-purple-400"
+            (click)="navigateTo('carrito'); toggleMobileMenu()">Mi Carrito</a>
+          <a class="hover:text-yellow-300 font-medium cursor-pointer transition-colors duration-200 py-2 border-b border-purple-400"
+            (click)="logout(); toggleMobileMenu()">Cerrar Sesión</a>
+        </div>
       </nav>
     </div>
   </div>

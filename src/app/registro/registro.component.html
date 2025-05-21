@@ -1,0 +1,136 @@
+<div class="min-h-screen bg-gray-100 py-6 flex flex-col justify-center sm:py-12">
+  <div class="relative py-3 sm:max-w-xl sm:mx-auto">
+    <div class="absolute inset-0 bg-gradient-to-r from-cyan-400 to-sky-500 shadow-lg transform -skew-y-6 sm:skew-y-0 sm:-rotate-6 sm:rounded-3xl"></div>
+    <div class="relative px-4 py-10 bg-white shadow-lg sm:rounded-3xl sm:p-20">
+      <div class="max-w-md mx-auto">
+        <div>
+          <h1 class="text-2xl font-semibold text-center text-gray-900">
+            {{ isAdmin ? 'Registro de Administrador' : 'Registro de Usuario' }}
+          </h1>
+        </div>
+        <div class="divide-y divide-gray-200">
+          <form [formGroup]="registroForm" (ngSubmit)="onSubmit()" class="py-8 space-y-4 text-base leading-6 text-gray-700 sm:text-lg sm:leading-7">
+            <!-- Campos comunes -->
+            <div class="relative">
+              <label for="nombreUsuario" class="block text-sm font-medium text-gray-700">Nombre de Usuario</label>
+              <input 
+                type="text" 
+                id="nombreUsuario" 
+                formControlName="nombreUsuario" 
+                placeholder="Nombre de usuario"
+                class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+              <div *ngIf="submitted && f['nombreUsuario'].errors" class="text-xs text-red-500 mt-1">
+                <span *ngIf="f['nombreUsuario'].errors['required']">Nombre de usuario es obligatorio</span>
+              </div>
+            </div>
+
+            <div class="relative">
+              <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+              <input 
+                type="email" 
+                id="email" 
+                formControlName="email" 
+                placeholder="Email"
+                class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+              <div *ngIf="submitted && f['email'].errors" class="text-xs text-red-500 mt-1">
+                <span *ngIf="f['email'].errors['required']">Email es obligatorio</span>
+                <span *ngIf="f['email'].errors['email']">Email debe ser válido</span>
+              </div>
+            </div>
+
+            <div class="relative">
+              <label for="contrasenna" class="block text-sm font-medium text-gray-700">Contraseña</label>
+              <input 
+                type="password" 
+                id="contrasenna" 
+                formControlName="contrasenna" 
+                placeholder="Contraseña"
+                class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+              <div *ngIf="submitted && f['contrasenna'].errors" class="text-xs text-red-500 mt-1">
+                <span *ngIf="f['contrasenna'].errors['required']">Contraseña es obligatoria</span>
+                <span *ngIf="f['contrasenna'].errors['minlength']">Contraseña debe tener al menos 6 caracteres</span>
+              </div>
+            </div>
+
+            <div class="relative">
+              <label for="confirmContrasenna" class="block text-sm font-medium text-gray-700">Confirmar Contraseña</label>
+              <input 
+                type="password" 
+                id="confirmContrasenna" 
+                formControlName="confirmContrasenna" 
+                placeholder="Confirmar contraseña"
+                class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+              <div *ngIf="submitted && f['confirmContrasenna'].errors" class="text-xs text-red-500 mt-1">
+                <span *ngIf="f['confirmContrasenna'].errors['required']">Confirmar contraseña es obligatorio</span>
+                <span *ngIf="f['confirmContrasenna'].errors['mustMatch']">Las contraseñas no coinciden</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="relative">
+                <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre</label>
+                <input 
+                  type="text" 
+                  id="nombre" 
+                  formControlName="nombre" 
+                  placeholder="Nombre"
+                  class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                <div *ngIf="submitted && f['nombre'].errors" class="text-xs text-red-500 mt-1">
+                  <span *ngIf="f['nombre'].errors['required']">Nombre es obligatorio</span>
+                </div>
+              </div>
+
+              <div class="relative">
+                <label for="apellido" class="block text-sm font-medium text-gray-700">Apellido</label>
+                <input 
+                  type="text" 
+                  id="apellido" 
+                  formControlName="apellido" 
+                  placeholder="Apellido"
+                  class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                <div *ngIf="submitted && f['apellido'].errors" class="text-xs text-red-500 mt-1">
+                  <span *ngIf="f['apellido'].errors['required']">Apellido es obligatorio</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Campos específicos para usuarios normales -->
+            <div *ngIf="!isAdmin" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="relative">
+                <label for="telefono" class="block text-sm font-medium text-gray-700">Teléfono</label>
+                <input 
+                  type="tel" 
+                  id="telefono" 
+                  formControlName="telefono" 
+                  placeholder="Teléfono"
+                  class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                <div *ngIf="submitted && f['telefono']?.errors" class="text-xs text-red-500 mt-1">
+                  <span *ngIf="f['telefono']?.errors?.['required']">Teléfono es obligatorio</span>
+                  <span *ngIf="f['telefono']?.errors?.['pattern']">Teléfono debe ser un número válido</span>
+                </div>
+              </div>
+
+              <div class="relative">
+                <label for="fechaNacimiento" class="block text-sm font-medium text-gray-700">Fecha de Nacimiento</label>
+                <input 
+                  type="date" 
+                  id="fechaNacimiento" 
+                  formControlName="fechaNacimiento"
+                  class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                <div *ngIf="submitted && f['fechaNacimiento']?.errors" class="text-xs text-red-500 mt-1">
+                  <span *ngIf="f['fechaNacimiento']?.errors?.['required']">Fecha de nacimiento es obligatoria</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-4">
+              <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                {{ isAdmin ? 'Registrar Administrador' : 'Registrar Usuario' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

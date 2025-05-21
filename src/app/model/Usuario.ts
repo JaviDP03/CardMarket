@@ -9,8 +9,8 @@ export class Usuario extends Actor {
     pedidos: Pedido[];
     direcciones: Direccion[];
 
-    constructor(nombre: string, apellido: string, email: string, nombreUsuario: string, contrasenna: string, rol: Roles, telefono: string, fechaNacimiento: Date) {
-        super(nombre, apellido, email, nombreUsuario, contrasenna, rol);
+    constructor(nombre: string, apellido: string, email: string, nombreUsuario: string, contrasenna: string, telefono: string, fechaNacimiento: Date) {
+        super(nombre, apellido, email, nombreUsuario, contrasenna);
         this.telefono = telefono;
         this.fechaNacimiento = fechaNacimiento;
         this.pedidos = [];

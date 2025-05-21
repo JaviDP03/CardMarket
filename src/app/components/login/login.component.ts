@@ -61,7 +61,10 @@ export class LoginComponent implements OnInit {
     this.actorService.login(login).subscribe({
       next: (response) => {
         sessionStorage.setItem('token', response.token);
-        this.router.navigate(['/']);
+        this.router.navigate(['/']).then(() => {
+          window.location.reload();
+        }
+        );
       },
       error: (error) => {
         console.error('Login error:', error);
@@ -75,6 +78,6 @@ export class LoginComponent implements OnInit {
   }
 
   navigateToRegister(): void {
-    this.router.navigate(['/register']);
+    this.router.navigate(['/registro']);
   }
 }
