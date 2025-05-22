@@ -26,9 +26,7 @@ export class PerfilComponent implements OnInit {
   constructor(
     private actorService: ActorService,
     private router: Router
-  ) {
-    this.username = jwtDecode(this.token!).sub;
-  }
+  ) { }
 
   ngOnInit(): void {
     if (this.token && this.token.length > 0) {
@@ -37,7 +35,7 @@ export class PerfilComponent implements OnInit {
   }
 
   showProfile() {
-    this.actorService.findbyUsername(this.username!).subscribe({
+    this.actorService.userLogin().subscribe({
       next: (response) => {
         this.currentUser = response;
 

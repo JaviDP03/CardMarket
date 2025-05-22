@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ActorService } from '../../../service/actor.service';
+
 @Component({
   selector: 'app-login',
   imports: [CommonModule, ReactiveFormsModule],
@@ -14,6 +15,7 @@ export class LoginComponent implements OnInit {
   isSubmitting = false;
   showPassword = false;
   loginError: string | null = null;
+  showErrorAlert = false;
 
   constructor(
     private fb: FormBuilder,
@@ -61,18 +63,30 @@ export class LoginComponent implements OnInit {
         sessionStorage.setItem('token', response.token);
         this.router.navigate(['/']).then(() => {
           window.location.reload();
-        }
-        );
+        });
       },
       error: (error) => {
         console.error('Login error:', error);
-        this.loginError = 'Ha ocurrido un error al iniciar sesión.';
+        this.loginError = 'Usuario o contraseña inválido';
+        this.showErrorAlert = true;
         this.isSubmitting = false;
+        
+        // Auto dismiss after 5 seconds
+        setTimeout(() => {
+          this.dismissError();
+        }, 5000);
       },
       complete: () => {
         this.isSubmitting = false;
       }
     });
+  }
+
+  dismissError(): void {
+    this.showErrorAlert = false;
+    setTimeout(() => {
+      this.loginError = null;
+    }, 300); // Small delay to let animation complete
   }
 
   navigateToRegister(): void {

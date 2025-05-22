@@ -7,14 +7,16 @@ export abstract class Actor {
     nombre: string;
     apellido: string;
     email: string;
+    urlImagen: string
     rol!: Roles;
 
 
-    constructor(nombre: string, apellido: string, email: string, nombreUsuario: string, contrasenna: string) {
+    constructor(nombre: string, apellido: string, email: string, nombreUsuario: string, contrasenna: string, urlImagen: string) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.email = email;
         this.nombreUsuario = nombreUsuario;
         this.contrasenna = contrasenna;
+        this.urlImagen = urlImagen;
     }
 }

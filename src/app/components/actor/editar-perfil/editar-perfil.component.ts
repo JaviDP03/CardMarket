@@ -5,10 +5,11 @@ import { ActorService } from '../../../service/actor.service';
 import { AdminService } from '../../../service/admin.service';
 import { UsuarioService } from '../../../service/usuario.service';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-editar-perfil',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './editar-perfil.component.html',
   styleUrl: './editar-perfil.component.css'
 })
@@ -18,6 +19,12 @@ export class EditarPerfilComponent {
   isLoading: boolean = true;
   isSubmitting: boolean = false;
   profileForm!: FormGroup;
+  
+  // Avatar related properties
+  avatarUrl: string | null = null;
+  showAvatarModal: boolean = false;
+  newAvatarUrl: string = '';
+  isPreviewError: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -122,6 +129,9 @@ export class EditarPerfilComponent {
       email: this.currentUser.email
     });
 
+    // Set avatar URL if it exists
+    this.avatarUrl = this.currentUser.avatarUrl || null;
+
     if (!this.isAdmin) {
       this.profileForm.patchValue({
         telefono: this.currentUser.telefono || '',
@@ -181,6 +191,11 @@ export class EditarPerfilComponent {
     } else {
       delete formData.confirmPassword; // No enviar la confirmación
     }
+
+    // Add avatar URL to form data if exists
+    if (this.avatarUrl) {
+      formData.avatarUrl = this.avatarUrl;
+    }
     
     const updateMethod = this.isAdmin ? 
       this.adminService.updateAdmin(formData) : 
@@ -201,5 +216,48 @@ export class EditarPerfilComponent {
 
   cancel(): void {
     this.router.navigate(['/perfil']);
+  }
+
+  // Avatar modal methods
+  openAvatarModal(): void {
+    this.showAvatarModal = true;
+    this.newAvatarUrl = this.avatarUrl || '';
+    this.isPreviewError = false;
+  }
+
+  closeAvatarModal(): void {
+    this.showAvatarModal = false;
+    this.newAvatarUrl = '';
+  }
+
+  saveAvatar(): void {
+    if (this.newAvatarUrl && !this.isPreviewError) {
+      this.avatarUrl = this.newAvatarUrl;
+      this.closeAvatarModal();
+    }
+  }
+
+  // Method to check if image URL is valid
+  checkImageUrl(url: string): void {
+    if (!url) {
+      this.isPreviewError = false;
+      return;
+    }
+
+    const img = new Image();
+    img.onload = () => {
+      this.isPreviewError = false;
+    };
+    img.onerror = () => {
+      this.isPreviewError = true;
+    };
+    img.src = url;
+  }
+
+  // Watch for changes in the avatar URL input
+  ngDoCheck(): void {
+    if (this.showAvatarModal && this.newAvatarUrl) {
+      this.checkImageUrl(this.newAvatarUrl);
+    }
   }
 }
