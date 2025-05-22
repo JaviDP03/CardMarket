@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Actor } from '../../model/Actor';
-import { Admin } from '../../model/Admin';
-import { Usuario } from '../../model/Usuario';
 import { jwtDecode } from 'jwt-decode';
-import { ActorService } from '../../service/actor.service';
+import { Actor } from '../../../model/Actor';
+import { Admin } from '../../../model/Admin';
+import { Usuario } from '../../../model/Usuario';
+import { ActorService } from '../../../service/actor.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-perfil',
@@ -24,6 +25,7 @@ export class PerfilComponent implements OnInit {
 
   constructor(
     private actorService: ActorService,
+    private router: Router
   ) {
     this.username = jwtDecode(this.token!).sub;
   }
@@ -55,5 +57,9 @@ export class PerfilComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  editProfile() {
+    this.router.navigate(['/perfil/editar']);
   }
 }

@@ -2,8 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ActorService } from '../../service/actor.service';
-
+import { ActorService } from '../../../service/actor.service';
 @Component({
   selector: 'app-login',
   imports: [CommonModule, ReactiveFormsModule],
@@ -29,8 +28,7 @@ export class LoginComponent implements OnInit {
   initForm(): void {
     this.loginForm = this.fb.group({
       username: ['', [Validators.required]],
-      password: ['', [Validators.required, Validators.minLength(0)]],
-      rememberMe: [false]
+      password: ['', [Validators.required, Validators.minLength(0)]]
     });
   }
 

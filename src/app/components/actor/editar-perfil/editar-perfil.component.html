@@ -1,0 +1,210 @@
+<div class="bg-gray-100 min-h-screen py-8">
+  <div class="max-w-4xl mx-auto px-4">
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+      <!-- Header with background -->
+      <div class="bg-gradient-to-r from-blue-500 to-purple-600 h-32 flex items-center p-6">
+        <h1 class="text-3xl font-bold text-white">Editar Perfil</h1>
+      </div>
+
+      <!-- Loading indicator -->
+      <div *ngIf="isLoading" class="flex justify-center items-center p-12">
+        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+
+      <!-- User not logged in message -->
+      <div *ngIf="!isLoading && !currentUser" class="p-8 text-center">
+        <p class="text-lg text-gray-600">No has iniciado sesión. Por favor, inicia sesión para editar tu perfil.</p>
+      </div>
+
+      <!-- Edit profile form -->
+      <div *ngIf="!isLoading && currentUser" class="p-8">
+        <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+          <!-- User avatar and basic info -->
+          <div class="flex flex-col md:flex-row items-center md:items-start gap-6 mb-8">
+            <div class="flex-shrink-0">
+              <div
+                class="h-32 w-32 rounded-full bg-gray-300 flex items-center justify-center text-3xl text-gray-600 font-bold border-4 border-blue-500 relative group">
+                {{ currentUser.nombreUsuario.charAt(0) }}
+                <div
+                  class="absolute inset-0 bg-black bg-opacity-50 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity cursor-pointer">
+                  <span class="text-white text-sm">Cambiar</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex-grow">
+              <div class="mb-4">
+                <label for="nombreUsuario" class="block text-sm font-medium text-gray-700 mb-1">Nombre de
+                  usuario</label>
+                <input type="text" id="nombreUsuario" formControlName="nombreUsuario"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <div *ngIf="profileForm.get('nombreUsuario')?.invalid && profileForm.get('nombreUsuario')?.touched"
+                  class="text-red-500 text-sm mt-1">
+                  El nombre de usuario es obligatorio
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Profile information -->
+          <div class="border-t pt-6">
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">Información Personal</h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div>
+                <label for="nombre" class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
+                <input type="text" id="nombre" formControlName="nombre"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <div *ngIf="profileForm.get('nombre')?.invalid && profileForm.get('nombre')?.touched"
+                  class="text-red-500 text-sm mt-1">
+                  El nombre es obligatorio
+                </div>
+              </div>
+
+              <div>
+                <label for="apellido" class="block text-sm font-medium text-gray-700 mb-1">Apellido</label>
+                <input type="text" id="apellido" formControlName="apellido"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <div *ngIf="profileForm.get('apellido')?.invalid && profileForm.get('apellido')?.touched"
+                  class="text-red-500 text-sm mt-1">
+                  El apellido es obligatorio
+                </div>
+              </div>
+
+              <div>
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <input type="email" id="email" formControlName="email"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <div *ngIf="profileForm.get('email')?.invalid && profileForm.get('email')?.touched"
+                  class="text-red-500 text-sm mt-1">
+                  Introduce un email válido
+                </div>
+              </div>
+
+              <!-- Usuario specific fields -->
+              <ng-container *ngIf="!isAdmin">
+                <div>
+                  <label for="telefono" class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
+                  <input type="tel" id="telefono" formControlName="telefono"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div>
+                  <label for="fechaNacimiento" class="block text-sm font-medium text-gray-700 mb-1">Fecha de
+                    nacimiento</label>
+                  <input type="date" id="fechaNacimiento" formControlName="fechaNacimiento"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+              </ng-container>
+            </div>
+
+            <!-- Change password section -->
+            <div class="mt-8 border-t pt-6">
+              <h3 class="text-xl font-semibold text-gray-800 mb-4">Cambiar contraseña</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Nueva contraseña</label>
+                  <input type="password" id="password" formControlName="password"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <div *ngIf="profileForm.get('password')?.touched && profileForm.get('password')?.errors"
+                    class="text-red-500 text-sm mt-1">
+                    La contraseña debe tener al menos 6 caracteres
+                  </div>
+                </div>
+
+                <div>
+                  <label for="confirmPassword" class="block text-sm font-medium text-gray-700 mb-1">Confirmar
+                    contraseña</label>
+                  <input type="password" id="confirmPassword" formControlName="confirmPassword"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <div *ngIf="profileForm.errors?.['passwordMismatch'] && profileForm.get('confirmPassword')?.touched"
+                    class="text-red-500 text-sm mt-1">
+                    Las contraseñas no coinciden
+                  </div>
+                </div>
+              </div>
+              <p class="text-sm text-gray-500 mt-2">Deja estos campos vacíos si no deseas cambiar tu contraseña.</p>
+            </div>
+
+            <!-- Address section for regular users -->
+            <div *ngIf="!isAdmin" class="mt-8 border-t pt-6">
+              <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold text-gray-800">Direcciones</h3>
+                <button type="button" (click)="addNewAddress()"
+                  class="bg-green-600 hover:bg-green-700 text-white text-sm py-1 px-3 rounded-md transition duration-200 flex items-center gap-1">
+                  <span>Añadir nueva</span>
+                </button>
+              </div>
+
+              <div formArrayName="direcciones" class="space-y-4">
+                <div *ngFor="let direccion of direcciones.controls; let i = index" [formGroupName]="i"
+                  class="bg-gray-50 p-4 rounded-md relative">
+                  <button type="button" (click)="removeAddress(i)"
+                    class="absolute top-2 right-2 text-red-600 hover:text-red-800">
+                    <span class="sr-only">Eliminar</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd"
+                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                        clip-rule="evenodd" />
+                    </svg>
+                  </button>
+
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label [for]="'direccion'+i" class="block text-sm font-medium text-gray-700 mb-1">Dirección</label>
+                      <input type="text" [id]="'direccion'+i" formControlName="direccion"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+
+                    <div>
+                      <label [for]="'codigoPostal'+i" class="block text-sm font-medium text-gray-700 mb-1">Código
+                        Postal</label>
+                      <input type="text" [id]="'codigoPostal'+i" formControlName="codigoPostal"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+
+                    <div>
+                      <label [for]="'ciudad'+i" class="block text-sm font-medium text-gray-700 mb-1">Ciudad</label>
+                      <input type="text" [id]="'ciudad'+i" formControlName="ciudad"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+
+                    <div>
+                      <label [for]="'provincia'+i" class="block text-sm font-medium text-gray-700 mb-1">Provincia</label>
+                      <input type="text" [id]="'provincia'+i" formControlName="provincia"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+
+                    <div>
+                      <label [for]="'pais'+i" class="block text-sm font-medium text-gray-700 mb-1">País</label>
+                      <input type="text" [id]="'pais'+i" formControlName="pais"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                  </div>
+                </div>
+
+                <div *ngIf="direcciones.controls.length === 0" class="text-center p-4 bg-gray-50 rounded-md">
+                  <p class="text-gray-500">No hay direcciones registradas. Añade una nueva dirección.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action buttons -->
+          <div class="mt-8 flex justify-end space-x-4">
+            <button type="button" (click)="cancel()"
+              class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-6 rounded-md transition duration-200">
+              Cancelar
+            </button>
+            <button type="submit" [disabled]="profileForm.invalid || isSubmitting"
+              class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-md transition duration-200 flex items-center gap-2">
+              <span *ngIf="isSubmitting"
+                class="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+              <span>Guardar Cambios</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
