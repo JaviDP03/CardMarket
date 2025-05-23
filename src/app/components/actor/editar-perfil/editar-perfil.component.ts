@@ -21,9 +21,9 @@ export class EditarPerfilComponent {
   profileForm!: FormGroup;
   
   // Avatar related properties
-  avatarUrl: string | null = null;
+  urlImagen: string | null = null;
   showAvatarModal: boolean = false;
-  newAvatarUrl: string = '';
+  newUrlImagen: string = '';
   isPreviewError: boolean = false;
 
   constructor(
@@ -97,6 +97,7 @@ export class EditarPerfilComponent {
       fechaNacimiento: [''],
       password: ['', [Validators.minLength(6)]],
       confirmPassword: [''],
+      urlImagen: [''],
       direcciones: this.fb.array([])
     }, { validators: this.passwordMatchValidator });
   }
@@ -126,11 +127,12 @@ export class EditarPerfilComponent {
       nombreUsuario: this.currentUser.nombreUsuario,
       nombre: this.currentUser.nombre,
       apellido: this.currentUser.apellido,
-      email: this.currentUser.email
+      email: this.currentUser.email,
+      urlImagen: this.currentUser.urlImagen || ''
     });
 
     // Set avatar URL if it exists
-    this.avatarUrl = this.currentUser.avatarUrl || null;
+    this.urlImagen = this.currentUser.urlImagen || null;
 
     if (!this.isAdmin) {
       this.profileForm.patchValue({
@@ -192,10 +194,8 @@ export class EditarPerfilComponent {
       delete formData.confirmPassword; // No enviar la confirmación
     }
 
-    // Add avatar URL to form data if exists
-    if (this.avatarUrl) {
-      formData.avatarUrl = this.avatarUrl;
-    }
+    // Avatar URL is now part of the form, no need for separate logic
+    // Remove the manual avatar addition since it's now in the form
     
     const updateMethod = this.isAdmin ? 
       this.adminService.updateAdmin(formData) : 
@@ -221,18 +221,22 @@ export class EditarPerfilComponent {
   // Avatar modal methods
   openAvatarModal(): void {
     this.showAvatarModal = true;
-    this.newAvatarUrl = this.avatarUrl || '';
+    this.newUrlImagen = this.urlImagen || '';
     this.isPreviewError = false;
   }
 
   closeAvatarModal(): void {
     this.showAvatarModal = false;
-    this.newAvatarUrl = '';
+    this.newUrlImagen = '';
   }
 
   saveAvatar(): void {
-    if (this.newAvatarUrl && !this.isPreviewError) {
-      this.avatarUrl = this.newAvatarUrl;
+    if (this.newUrlImagen && !this.isPreviewError) {
+      this.urlImagen = this.newUrlImagen;
+      // Update the form control value
+      this.profileForm.patchValue({
+        urlImagen: this.newUrlImagen
+      });
       this.closeAvatarModal();
     }
   }
@@ -256,8 +260,8 @@ export class EditarPerfilComponent {
 
   // Watch for changes in the avatar URL input
   ngDoCheck(): void {
-    if (this.showAvatarModal && this.newAvatarUrl) {
-      this.checkImageUrl(this.newAvatarUrl);
+    if (this.showAvatarModal && this.newUrlImagen) {
+      this.checkImageUrl(this.newUrlImagen);
     }
   }
 }
