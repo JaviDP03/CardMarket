@@ -29,7 +29,7 @@ export class ProductoService {
   }
 
   getProductosByCategoria(idCategoria: number): Observable<Producto[]> {
-    return this.http.get<Producto[]>(`${this.apiUrl}/${idCategoria}`);
+    return this.http.get<Producto[]>(`${this.apiUrl}/categoria/${idCategoria}`);
   }
 
   deleteProducto(id: number): Observable<boolean> {

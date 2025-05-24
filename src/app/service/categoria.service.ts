@@ -28,6 +28,10 @@ export class CategoriaService {
     return this.http.get<Categoria>(`${this.apiUrl}/${id}`);
   }
 
+  getCategoriaByNombre(nombre: string): Observable<Categoria> {
+    return this.http.get<Categoria>(`${this.apiUrl}/nombre/${nombre}`);
+  }
+
   deleteCategoria(id: number): Observable<boolean> {
     return this.http.delete<boolean>(`${this.apiUrl}/${id}`);
   }

@@ -4,6 +4,7 @@ import { ProductoService } from '../../../service/producto.service';
 import { Producto } from '../../../model/Producto';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { CategoriaService } from '../../../service/categoria.service';
 
 @Component({
   selector: 'app-listar-productos',
@@ -20,12 +21,13 @@ export class ListarProductosComponent implements OnInit {
 
   constructor(
     private productoService: ProductoService,
+    private categoriaService: CategoriaService,
     private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
-      this.categoriaActual = params.get('categoria');
+      this.categoriaActual = params.get('nombre');
       this.loadProductos();
     });
   }
@@ -35,41 +37,35 @@ export class ListarProductosComponent implements OnInit {
     this.error = null;
     
     if (this.categoriaActual) {
-      // Convert category name to ID (you might need a more robust mapping)
-      const idCategoria = this.categoriaActual === 'coleccion' ? 1 : 
-                         this.categoriaActual === 'carta' ? 2 : 0;
+      // Normalize category names
+      const normalizedCategory = this.categoriaActual
+        .replace('cartas', 'carta')
+        .replace('colecciones', 'coleccion');
       
-      if (idCategoria > 0) {
-        this.productoService.getProductosByCategoria(idCategoria).subscribe({
-          next: (data) => {
-            this.productos = data;
-            this.loading = false;
-          },
-          error: (err) => {
-            this.error = 'Error al cargar los productos por categoría';
-            this.loading = false;
-            console.error(err);
-          }
-        });
-      } else {
-        this.getAllProductos();
-      }
-    } else {
-      this.getAllProductos();
+      // First get the category ID, then use it to fetch products
+      this.categoriaService.getCategoriaByNombre(normalizedCategory).subscribe({
+        next: (categoria) => {
+          const idCategoria = categoria.id;
+          console.log(idCategoria);
+          // Only fetch products after we have the category ID
+          this.productoService.getProductosByCategoria(idCategoria).subscribe({
+            next: (data) => {
+              this.productos = data;
+              this.loading = false;
+            },
+            error: (err) => {
+              this.error = 'Error al cargar los productos por categoría';
+              this.loading = false;
+              console.error(err);
+            }
+          });
+        },
+        error: (err) => {
+          this.error = 'Error al cargar la categoría';
+          this.loading = false;
+          console.error(err);
+        }
+      });
     }
-  }
-
-  getAllProductos(): void {
-    this.productoService.getAllProductos().subscribe({
-      next: (data) => {
-        this.productos = data;
-        this.loading = false;
-      },
-      error: (err) => {
-        this.error = 'Error al cargar los productos';
-        this.loading = false;
-        console.error(err);
-      }
-    });
   }
 }
