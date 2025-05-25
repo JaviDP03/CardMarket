@@ -27,7 +27,7 @@ export class ListarProductosComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
-      this.categoriaActual = params.get('nombre');
+      this.categoriaActual = params.get('nombreCategoria');
       this.loadProductos();
     });
   }
@@ -37,6 +37,7 @@ export class ListarProductosComponent implements OnInit {
     this.error = null;
     
     if (this.categoriaActual) {
+      console.log("dos");
       // Normalize category names
       const normalizedCategory = this.categoriaActual
         .replace('cartas', 'carta')

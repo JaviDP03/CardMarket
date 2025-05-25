@@ -3,6 +3,7 @@ import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Producto } from '../model/Producto';
 import { Observable } from 'rxjs';
+import { Valoracion } from '../model/Valoracion';
 
 @Injectable({
   providedIn: 'root'
@@ -30,6 +31,10 @@ export class ProductoService {
 
   getProductosByCategoria(idCategoria: number): Observable<Producto[]> {
     return this.http.get<Producto[]>(`${this.apiUrl}/categoria/${idCategoria}`);
+  }
+
+  getValoraciones(id: number): Observable<Valoracion[]> {
+    return this.http.get<Valoracion[]>(`${this.apiUrl}/${id}/valoraciones`);
   }
 
   deleteProducto(id: number): Observable<boolean> {
