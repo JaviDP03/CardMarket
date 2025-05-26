@@ -30,10 +30,10 @@ export class ValoracionService {
   }
 
   getUsuarioByValoracion(id: number): Observable<Usuario> {
-    return this.http.get<any>(`${this.apiUrl}/${id}/usuario`);
+    return this.http.get<any>(`${this.apiUrl}/valoraciones/${id}/usuario`);
   }
 
-  deleteValoracion(id: number): Observable<boolean> {
-    return this.http.delete<boolean>(`${this.apiUrl}/${id}`);
+  deleteValoracion(id: number, idProducto: number): Observable<boolean> {
+    return this.http.delete<boolean>(`${this.apiUrl}/productos/${idProducto}/valoraciones/${id}`);
   }
 }

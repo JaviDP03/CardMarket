@@ -47,7 +47,7 @@
     <h2 class="text-2xl font-bold text-gray-900 mb-6">Valoraciones</h2>
 
     <!-- Añadir valoración -->
-    <div *ngIf="isLoggedIn" class="mb-8 bg-gray-50 p-4 rounded-lg">
+    <div *ngIf="isLoggedIn && !usuarioTieneValoracion" class="mb-8 bg-gray-50 p-4 rounded-lg">
       <h3 class="text-lg font-semibold mb-3">Añadir tu valoración</h3>
       <div class="flex items-center mb-3">
         <span class="mr-2">Puntuación:</span>
@@ -78,6 +78,10 @@
       </button>
     </div>
 
+    <div *ngIf="isLoggedIn && usuarioTieneValoracion" class="mb-6 p-4 bg-blue-50 rounded-lg text-center">
+      <p class="text-blue-800">Ya has valorado este producto</p>
+    </div>
+
     <div *ngIf="!isLoggedIn" class="mb-6 p-4 bg-gray-50 rounded-lg text-center">
       <p>Debes iniciar sesión para dejar una valoración</p>
       <button (click)="redirectLogin()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 mt-2 rounded-lg">
@@ -90,11 +94,20 @@
       <div *ngFor="let valoracion of producto?.valoraciones" class="border-b border-gray-200 pb-6 last:border-0">
         <div class="flex justify-between items-center mb-2">
           <div class="flex items-center">
-            <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center mr-3">
-              <span class="font-bold text-indigo-800">{{ usuarioValoracion?.nombre?.charAt(0) || 'U' }}</span>
+            <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center mr-3 overflow-hidden">
+              <img 
+                *ngIf="getUsuarioValoracion(valoracion.id)?.urlImagen" 
+                [src]="getUsuarioValoracion(valoracion.id)?.urlImagen" 
+                [alt]="getUsuarioValoracion(valoracion.id)?.nombre"
+                class="w-full h-full object-cover">
+              <span 
+                *ngIf="!getUsuarioValoracion(valoracion.id)?.urlImagen" 
+                class="font-bold text-indigo-800">
+                {{ getUsuarioValoracion(valoracion.id)?.nombre?.charAt(0) || 'U' }}
+              </span>
             </div>
             <div>
-              <p class="font-semibold">{{ usuarioValoracion?.nombre || 'Usuario' }}</p>
+              <p class="font-semibold">{{ getUsuarioValoracion(valoracion.id)?.nombre || 'Usuario' }}</p>
               <div class="flex text-yellow-400">
                 <span *ngFor="let _ of array(valoracion.puntuacion)">★</span>
                 <span *ngFor="let _ of array(5 - valoracion.puntuacion)" class="text-gray-300">★</span>
@@ -104,7 +117,7 @@
           <div *ngIf="esValoracionDelUsuario(valoracion)">
             <button 
               (click)="eliminarValoracion(valoracion.id)" 
-              class="text-red-600 hover:text-red-800">
+              class="text-red-600 hover:text-red-800 px-2 py-1 rounded hover:bg-red-50">
               <span>Eliminar</span>
             </button>
           </div>

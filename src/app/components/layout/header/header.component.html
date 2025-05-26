@@ -3,20 +3,18 @@
     <div class="flex justify-between items-center">
       <div class="flex items-center space-x-4">
         <!-- Logo -->
-        <div class="cursor-pointer" (click)="navigateTo('home')">
+        <div class="cursor-pointer" (click)="navigateTo('')">
           <h1 class="font-bold text-2xl hover:text-yellow-300 transition-colors duration-200">CardMarket</h1>
         </div>
 
         <!-- Desktop Navigation -->
         <nav class="hidden md:flex items-center space-x-6">
           <a class="hover:text-yellow-300 font-medium cursor-pointer transition-colors duration-200 border-b-2 border-transparent hover:border-yellow-300 pb-1"
-            (click)="navigateTo('home')">Inicio</a>
+            (click)="navigateTo('')">Inicio</a>
           <a class="hover:text-yellow-300 font-medium cursor-pointer transition-colors duration-200 border-b-2 border-transparent hover:border-yellow-300 pb-1"
             (click)="navigateTo('cartas')">Cartas</a>
           <a class="hover:text-yellow-300 font-medium cursor-pointer transition-colors duration-200 border-b-2 border-transparent hover:border-yellow-300 pb-1"
             (click)="navigateTo('colecciones')">Colecciones</a>
-          <a class="hover:text-yellow-300 font-medium cursor-pointer transition-colors duration-200 border-b-2 border-transparent hover:border-yellow-300 pb-1"
-            (click)="navigateTo('events')">Eventos</a>
         </nav>
       </div>
 
@@ -33,7 +31,7 @@
         <!-- User is logged in -->
         <div *ngIf="isLoggedIn" class="flex items-center space-x-4">
           <!-- Shopping Cart -->
-          <div class="relative cursor-pointer" (click)="navigateTo('cart')">
+          <div class="relative cursor-pointer" (click)="navigateTo('carrito')">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white hover:text-yellow-300 transition-colors duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>

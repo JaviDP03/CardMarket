@@ -5,6 +5,7 @@ import { PerfilComponent } from './components/actor/perfil/perfil.component';
 import { EditarPerfilComponent } from './components/actor/editar-perfil/editar-perfil.component';
 import { ListarProductosComponent } from './components/producto/listar-productos/listar-productos.component';
 import { DetallesProductoComponent } from './components/producto/detalles-producto/detalles-producto.component';
+import { CarritoComponent } from './components/carrito/carrito.component';
 
 export const routes: Routes = [
     { path: 'login', component: LoginComponent },
@@ -13,5 +14,6 @@ export const routes: Routes = [
     { path: 'perfil', component: PerfilComponent},
     { path: 'perfil/editar', component: EditarPerfilComponent },
     { path: 'productos/:id', component: DetallesProductoComponent },
-    { path: ':nombreCategoria', component: ListarProductosComponent}  
+    { path: 'carrito', component: CarritoComponent },
+    { path: ':nombreCategoria', component: ListarProductosComponent},  
 ];

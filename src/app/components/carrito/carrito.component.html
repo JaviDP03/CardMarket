@@ -1,0 +1,176 @@
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">Carrito de Compras</h1>
+      <p class="text-gray-600 mt-2">Revisa tus productos y completa tu pedido</p>
+    </div>
+
+    <!-- User not logged in message -->
+    <div *ngIf="!currentUser" class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-8">
+      <div class="flex items-center space-x-3">
+        <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.98-.833-2.75 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+        </svg>
+        <div class="flex-1">
+          <h3 class="text-lg font-medium text-yellow-800">Inicia sesión para continuar</h3>
+          <p class="text-yellow-700">Necesitas estar autenticado para realizar un pedido.</p>
+        </div>
+        <button (click)="navigateToLogin()" 
+                class="bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 transition-colors">
+          Iniciar Sesión
+        </button>
+      </div>
+    </div>
+
+    <!-- Debug info (remove in production) -->
+    <div *ngIf="currentUser" class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+      <p class="text-green-800 text-sm">
+        <strong>Usuario:</strong> {{currentUser.nombreUsuario}} (ID: {{currentUser.id}})
+      </p>
+    </div>
+
+    <!-- Cart content - show even if not logged in to display cart items -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Cart Items -->
+      <div class="lg:col-span-2">
+        <div class="bg-white rounded-lg shadow-sm">
+          <div class="p-6 border-b border-gray-200">
+            <h2 class="text-xl font-semibold text-gray-900">Productos ({{cartItems.length}})</h2>
+          </div>
+
+          <div *ngIf="cartItems.length === 0" class="p-8 text-center">
+            <div class="text-gray-400 text-6xl mb-4">🛒</div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">Tu carrito está vacío</h3>
+            <p class="text-gray-600 mb-4">Agrega algunos productos para comenzar</p>
+            <button (click)="navigateToProducts()" 
+                    class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+              Explorar Productos
+            </button>
+          </div>
+
+          <div *ngFor="let item of cartItems; let i = index" class="p-6 border-b border-gray-200 last:border-b-0">
+            <div class="flex items-center space-x-4">
+              <img [src]="item.producto.urlImagen" [alt]="item.producto.nombre" 
+                   class="w-20 h-20 object-cover rounded-lg bg-gray-100">
+              
+              <div class="flex-1">
+                <h3 class="text-lg font-medium text-gray-900">{{item.producto.nombre}}</h3>
+                <p class="text-lg font-semibold text-blue-600 mt-1">{{item.producto.precio | currency:'EUR':'symbol':'1.2-2'}}</p>
+              </div>
+
+              <div class="flex items-center space-x-3">
+                <button (click)="updateQuantity(item.producto.id, -1)"
+                        class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50">
+                  <span class="text-gray-600">-</span>
+                </button>
+                <span class="w-8 text-center font-medium">{{item.cantidad}}</span>
+                <button (click)="updateQuantity(item.producto.id, 1)"
+                        class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50">
+                  <span class="text-gray-600">+</span>
+                </button>
+              </div>
+
+              <div class="text-right">
+                <p class="text-lg font-semibold text-gray-900">{{item.total | currency:'EUR':'symbol':'1.2-2'}}</p>
+                <button (click)="removeItem(item.producto.id)"
+                        class="text-red-600 hover:text-red-800 transition-colors mt-2">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Summary & Address -->
+      <div class="space-y-6">
+        <!-- Address Selection -->
+        <div class="bg-white rounded-lg shadow-sm p-6" *ngIf="cartItems.length > 0">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Dirección de Envío</h3>
+          
+          <!-- No addresses message -->
+          <div *ngIf="direcciones.length === 0" class="text-center py-6">
+            <svg class="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+            <h4 class="text-lg font-medium text-gray-900 mb-2">No tienes direcciones guardadas</h4>
+            <p class="text-gray-600 mb-4">Agrega una dirección para poder realizar pedidos</p>
+            <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+              Agregar dirección
+            </button>
+          </div>
+
+          <!-- Addresses list -->
+          <div class="space-y-3" *ngIf="direcciones.length > 0">
+            <div *ngFor="let direccion of direcciones" 
+                 class="border rounded-lg p-4 cursor-pointer transition-colors"
+                 [class.border-blue-500]="selectedAddressId === direccion.id"
+                 [class.bg-blue-50]="selectedAddressId === direccion.id"
+                 [class.border-gray-200]="selectedAddressId !== direccion.id"
+                 (click)="selectedAddressId = direccion.id">
+              
+              <div class="flex items-start space-x-3">
+                <input type="radio" 
+                       [checked]="selectedAddressId === direccion.id"
+                       class="mt-1 text-blue-600">
+                <div class="flex-1">
+                  <span class="font-medium text-gray-900">{{direccion.direccion}}</span>
+                  <p class="text-sm text-gray-600">{{direccion.ciudad}}, {{direccion.codigoPostal}}</p>
+                  <p class="text-sm text-gray-600">{{direccion.pais}}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button class="mt-4 text-blue-600 hover:text-blue-800 text-sm font-medium" *ngIf="direcciones.length > 0">
+            + Agregar nueva dirección
+          </button>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="bg-white rounded-lg shadow-sm p-6" *ngIf="cartItems.length > 0">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Resumen del Pedido</h3>
+          
+          <div class="space-y-3">
+            <div class="flex justify-between text-gray-600">
+              <span>Subtotal</span>
+              <span>{{getSubtotal() | currency:'EUR':'symbol':'1.2-2'}}</span>
+            </div>
+            <div class="flex justify-between text-gray-600">
+              <span>Envío</span>
+              <span>{{getShipping() | currency:'EUR':'symbol':'1.2-2'}}</span>
+            </div>
+            <div class="border-t pt-3">
+              <div class="flex justify-between text-lg font-semibold text-gray-900">
+                <span>Total</span>
+                <span>{{getTotal() | currency:'EUR':'symbol':'1.2-2'}}</span>
+              </div>
+            </div>
+          </div>
+
+          <button (click)="createOrder()"
+                  [disabled]="!selectedAddressId || isLoading || direcciones.length === 0"
+                  class="w-full mt-6 bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">
+            <span *ngIf="!isLoading && direcciones.length > 0">Crear Pedido</span>
+            <span *ngIf="!isLoading && direcciones.length === 0">Agrega una dirección primero</span>
+            <span *ngIf="isLoading" class="flex items-center justify-center space-x-2">
+              <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <span>Procesando...</span>
+            </span>
+          </button>
+
+          <p class="text-xs text-gray-500 mt-3 text-center">
+            Al crear el pedido aceptas nuestros términos y condiciones
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

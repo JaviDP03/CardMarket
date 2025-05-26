@@ -8,6 +8,7 @@ import { ProductoService } from '../../../service/producto.service';
 import { ActorService } from '../../../service/actor.service';
 import { ValoracionService } from '../../../service/valoracion.service';
 import { Usuario } from '../../../model/Usuario';
+import { ItemPedido } from '../../../model/ItemPedido';
 
 @Component({
   selector: 'app-detalles-producto',
@@ -23,7 +24,10 @@ export class DetallesProductoComponent implements OnInit {
   usuarioId: number | null = null;
   usuarioValoracion: Usuario | null = null;
   nuevaValoracion: Valoracion = new Valoracion(0, '', new Date());
-  
+  usuarioTieneValoracion: boolean = false;
+  valoracionesUsuario: Valoracion[] = [];
+  usuariosValoraciones: Map<number, Usuario> = new Map();
+
   constructor(
     private route: ActivatedRoute,
     private productoService: ProductoService,
@@ -37,22 +41,87 @@ export class DetallesProductoComponent implements OnInit {
     this.checkLoginStatus();
   }
 
-  private cargarProducto(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    if (id) {
-      this.productoService.getProductoById(id).subscribe({
-        next: (producto) => this.producto = producto
-      });
-    }
-  }
-
   private checkLoginStatus(): void {
     this.actorService.userLogin().subscribe({
       next: (response) => {
         this.isLoggedIn = true;
         this.usuarioId = response.id;
+        this.cargarValoracionesUsuario();
+      },
+      error: (error) => {
+        this.isLoggedIn = false;
+        console.log('Usuario no logueado');
       }
     });
+  }
+
+  private cargarValoracionesUsuario(): void {
+    if (this.isLoggedIn) {
+      this.valoracionService.getValoracionesByUsuario().subscribe({
+        next: (valoraciones) => {
+          this.valoracionesUsuario = valoraciones;
+          console.log('Valoraciones cargadas del usuario:', this.valoracionesUsuario);
+          if (this.producto) {
+            this.verificarValoracionUsuario();
+          }
+        },
+        error: (error) => {
+          console.error('Error al cargar valoraciones del usuario:', error);
+        }
+      });
+    }
+  }
+
+  private cargarProducto(): void {
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    if (id) {
+      this.productoService.getProductoById(id).subscribe({
+        next: (producto) => {
+          this.producto = producto;
+          this.cargarUsuariosValoraciones();
+          // Solo verificar si ya tenemos las valoraciones del usuario cargadas
+          if (this.isLoggedIn && this.valoracionesUsuario.length > 0) {
+            this.verificarValoracionUsuario();
+          }
+        }
+      });
+    }
+  }
+
+  private cargarUsuariosValoraciones(): void {
+    if (this.producto?.valoraciones && this.producto.valoraciones.length > 0) {
+      // Limpiar el mapa antes de cargar nuevos usuarios
+      this.usuariosValoraciones.clear();
+
+      this.producto.valoraciones.forEach(valoracion => {
+        this.valoracionService.getUsuarioByValoracion(valoracion.id).subscribe({
+          next: (usuario) => {
+            this.usuariosValoraciones.set(valoracion.id, usuario);
+          },
+          error: (error) => {
+            console.error('Error al obtener usuario de valoración:', error);
+            // En caso de error, crear un usuario por defecto
+            this.usuariosValoraciones.set(valoracion.id, {
+              id: 0,
+              nombre: 'Usuario',
+              fotoPerfil: ''
+            } as unknown as Usuario);
+          }
+        });
+      });
+    }
+  }
+
+  private verificarValoracionUsuario(): void {
+    if (this.producto && this.valoracionesUsuario.length > 0) {
+      this.usuarioTieneValoracion = this.valoracionesUsuario.some(
+        valoracion => this.producto?.valoraciones?.some(pv => pv.id === valoracion.id)
+      );
+      // Debug: Log para verificar las valoraciones
+      console.log('Valoraciones del usuario:', this.valoracionesUsuario);
+      console.log('Valoraciones del producto:', this.producto?.valoraciones);
+      console.log('Usuario tiene valoración:', this.usuarioTieneValoracion);
+    }
   }
 
   decrementarCantidad(): void {
@@ -69,25 +138,37 @@ export class DetallesProductoComponent implements OnInit {
 
   agregarAlCarrito(): void {
     if (this.producto) {
-      // Aquí agregarías la lógica para añadir al carrito
-      console.log(`Agregando ${this.cantidad} unidades del producto ${this.producto.nombre} al carrito`);
-      // Por ejemplo:
-      // this.carritoService.agregarProducto(this.producto, this.cantidad);
+      if (!localStorage.getItem('carrito')) {
+        localStorage.setItem('carrito', JSON.stringify([]));
+      }
+
+      let carrito: ItemPedido[] = JSON.parse(localStorage.getItem('carrito') || '[]');
       
-      // Mensaje de confirmación
-      alert(`Se han añadido ${this.cantidad} unidades de ${this.producto.nombre} al carrito`);
+      // Buscar si el producto ya existe en el carrito
+      const itemExistente = carrito.find(item => item.producto.id === this.producto!.id);
+      
+      if (itemExistente) {
+        // Si existe, solo sumar la cantidad
+        itemExistente.cantidad += this.cantidad;
+        itemExistente.total = itemExistente.producto.precio * itemExistente.cantidad;
+      } else {
+        // Si no existe, agregar nuevo item
+        carrito.push(new ItemPedido(this.producto, this.cantidad, this.producto.precio * this.cantidad));
+      }
+      
+      localStorage.setItem('carrito', JSON.stringify(carrito));
     }
   }
 
-  establecerPuntuacion(puntuacion: number): void {
-    if (!this.nuevaValoracion) {
+    establecerPuntuacion(puntuacion: number): void {
+      if(!this.nuevaValoracion) {
       this.resetNuevaValoracion();
     }
     this.nuevaValoracion!.puntuacion = puntuacion;
   }
 
   enviarValoracion(): void {
-    if (!this.isLoggedIn || !this.producto) {
+    if (!this.isLoggedIn || !this.producto || this.usuarioTieneValoracion) {
       return;
     }
 
@@ -95,13 +176,17 @@ export class DetallesProductoComponent implements OnInit {
       alert('Por favor, selecciona una puntuación');
       return;
     }
-    
-    this.valoracionService.createValoracion(this.producto!.id, this.nuevaValoracion).subscribe(valoracionCreada => {
-      this.resetNuevaValoracion();
+
+    this.valoracionService.createValoracion(this.producto!.id, this.nuevaValoracion).subscribe({
+      next: (valoracionCreada) => {
+        this.resetNuevaValoracion();
+        this.cargarProducto(); // Recargar producto y usuarios
+        this.cargarValoracionesUsuario(); // Actualizar estado
+      },
+      error: (error) => {
+        console.error('Error al crear valoración:', error);
+      }
     });
-    
-    console.log('Enviando valoración:', this.nuevaValoracion);
-    this.resetNuevaValoracion();
   }
 
   resetNuevaValoracion(): void {
@@ -110,38 +195,25 @@ export class DetallesProductoComponent implements OnInit {
 
   eliminarValoracion(id: number): void {
     if (confirm('¿Estás seguro de que quieres eliminar esta valoración?')) {
-      // this.valoracionesService.eliminarValoracion(id).subscribe({
-      //   next: () => {
-      //     if (this.producto && this.producto.valoraciones) {
-      //       this.producto.valoraciones = this.producto.valoraciones.filter(v => v.id !== id);
-      //     }
-      //   }
-      // });
-      console.log('Eliminando valoración con ID:', id);
+      this.valoracionService.deleteValoracion(id, this.producto!.id).subscribe({
+        next: () => {
+          this.cargarProducto(); // Recargar producto y usuarios
+          this.cargarValoracionesUsuario(); // Actualizar estado
+        },
+        error: (error) => {
+          console.error('Error al eliminar valoración:', error);
+        }
+      });
     }
   }
 
-  esValoracionDelUsuario(valoracion: Valoracion): any {
-    this.valoracionService.getValoracionesByUsuario().subscribe({
-      next: (valoraciones) => {
-        return valoraciones.some(v => v.id === valoracion.id);
-      },
-      error: (error) => {
-        console.error('Error al verificar la valoración del usuario:', error);
-        return false;
-      }
-    });
+  esValoracionDelUsuario(valoracion: Valoracion): boolean {
+    console.log('Valoraciones del usuario:', this.valoracionesUsuario);
+    return this.valoracionesUsuario.some(v => v.id === valoracion.id);
   }
-  
-  getUsuarioValoracion(id: number): void {
-    this.valoracionService.getUsuarioByValoracion(id).subscribe({
-      next: (usuario) => {
-        this.usuarioValoracion = usuario;
-      },
-      error: (error) => {
-        console.error('Error al obtener el usuario de la valoración:', error);
-      }
-    });
+
+  getUsuarioValoracion(valoracionId: number): Usuario | null {
+    return this.usuariosValoraciones.get(valoracionId) || null;
   }
 
   redirectLogin(): void {
