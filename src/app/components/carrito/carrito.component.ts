@@ -6,6 +6,8 @@ import { ActorService } from '../../service/actor.service';
 import { Usuario } from '../../model/Usuario';
 import { Direccion } from '../../model/Direccion';
 import { ItemPedido } from '../../model/ItemPedido';
+import { PedidoService } from '../../service/pedido.service';
+import { Pedido } from '../../model/Pedido';
 
 @Component({
   selector: 'app-carrito',
@@ -22,6 +24,7 @@ export class CarritoComponent implements OnInit {
 
   constructor(
     private actorService: ActorService,
+    private pedidoService: PedidoService,
     private router: Router)
      {}
 
@@ -125,28 +128,34 @@ export class CarritoComponent implements OnInit {
       return;
     }
 
+    const selectedAddress = this.direcciones.find(dir => dir.id === this.selectedAddressId);
+    if (!selectedAddress) {
+      console.error('Selected address not found');
+      return;
+    }
+
     this.isLoading = true;
-    
-    // Mock order creation - replace with actual service call
-    setTimeout(() => {
-      console.log('Order created:', {
-        userId: this.currentUser?.id,
-        items: this.cartItems,
-        addressId: this.selectedAddressId,
-        total: this.getTotal()
-      });
-      
-      // Clear cart after successful order
-      this.cartItems = [];
-      this.saveCartToLocalStorage();
-      
-      this.isLoading = false;
-      this.router.navigate(['/pedidos']);
-    }, 2000);
+    const pedido = new Pedido(new Date(), selectedAddress, this.cartItems);
+
+    this.pedidoService.createPedido(pedido).subscribe({
+      next: response => {
+        console.log('Order created successfully:', response);
+        // Clear cart after successful order
+        this.cartItems = [];
+        localStorage.removeItem('carrito');
+        this.isLoading = false;
+        // Optionally navigate to order confirmation or orders page
+        this.router.navigate(['/pedidos']);
+      },
+      error: error => {
+        console.error('Error creating order:', error);
+        this.isLoading = false;
+      }
+    });
   }
 
   navigateToProducts() {
-    this.router.navigate(['/productos']);
+    this.router.navigate(['/cartas']);
   }
 
   navigateToLogin() {

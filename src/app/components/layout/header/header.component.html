@@ -1,4 +1,4 @@
-<header class="bg-gradient-to-r from-purple-700 via-purple-500 to-pink-500 text-white shadow-lg">
+<header class="bg-gradient-to-r from-purple-900 via-purple-700 to-pink-700 text-white shadow-lg">
   <div class="container mx-auto px-4 py-3">
     <div class="flex justify-between items-center">
       <div class="flex items-center space-x-4">
@@ -6,17 +6,17 @@
         <div class="cursor-pointer" (click)="navigateTo('')">
           <h1 class="font-bold text-2xl hover:text-yellow-300 transition-colors duration-200">CardMarket</h1>
         </div>
-
-        <!-- Desktop Navigation -->
-        <nav class="hidden md:flex items-center space-x-6">
-          <a class="hover:text-yellow-300 font-medium cursor-pointer transition-colors duration-200 border-b-2 border-transparent hover:border-yellow-300 pb-1"
-            (click)="navigateTo('')">Inicio</a>
-          <a class="hover:text-yellow-300 font-medium cursor-pointer transition-colors duration-200 border-b-2 border-transparent hover:border-yellow-300 pb-1"
-            (click)="navigateTo('cartas')">Cartas</a>
-          <a class="hover:text-yellow-300 font-medium cursor-pointer transition-colors duration-200 border-b-2 border-transparent hover:border-yellow-300 pb-1"
-            (click)="navigateTo('colecciones')">Colecciones</a>
-        </nav>
       </div>
+
+      <!-- Desktop Navigation - Centered -->
+      <nav class="hidden md:flex items-center space-x-6">
+        <a class="hover:text-yellow-300 font-medium cursor-pointer transition-colors duration-200 border-b-2 border-transparent hover:border-yellow-300 pb-1"
+          (click)="navigateTo('')">Inicio</a>
+        <a class="hover:text-yellow-300 font-medium cursor-pointer transition-colors duration-200 border-b-2 border-transparent hover:border-yellow-300 pb-1"
+          (click)="navigateTo('cartas')">Cartas</a>
+        <a class="hover:text-yellow-300 font-medium cursor-pointer transition-colors duration-200 border-b-2 border-transparent hover:border-yellow-300 pb-1"
+          (click)="navigateTo('colecciones')">Colecciones</a>
+      </nav>
 
       <!-- Auth Buttons and Mobile Menu Toggle -->
       <div class="flex items-center space-x-4">
