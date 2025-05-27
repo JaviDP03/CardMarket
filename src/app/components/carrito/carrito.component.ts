@@ -152,4 +152,8 @@ export class CarritoComponent implements OnInit {
   navigateToLogin() {
     this.router.navigate(['/login']);
   }
+
+  agregarDireccion() {
+    this.router.navigate(['/perfil/editar']);
+  }
 }
