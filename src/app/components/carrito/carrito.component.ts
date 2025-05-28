@@ -21,6 +21,7 @@ export class CarritoComponent implements OnInit {
   selectedAddressId: number | null = null;
   isLoading = false;
   currentUser: Usuario | null = null;
+  showSuccessModal = false;
 
   constructor(
     private actorService: ActorService,
@@ -144,14 +145,27 @@ export class CarritoComponent implements OnInit {
         this.cartItems = [];
         localStorage.removeItem('carrito');
         this.isLoading = false;
-        // Optionally navigate to order confirmation or orders page
-        this.router.navigate(['/pedidos']);
+        
+        // Show success modal
+        this.showSuccessModal = true;
+        
+        // Auto redirect after 3 seconds if user doesn't click the button
+        setTimeout(() => {
+          if (this.showSuccessModal) {
+            this.closeModalAndRedirect();
+          }
+        }, 3000);
       },
       error: error => {
         console.error('Error creating order:', error);
         this.isLoading = false;
       }
     });
+  }
+
+  closeModalAndRedirect() {
+    this.showSuccessModal = false;
+    this.router.navigate(['/']);
   }
 
   navigateToProducts() {

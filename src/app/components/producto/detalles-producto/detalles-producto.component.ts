@@ -18,7 +18,7 @@ import { ItemPedido } from '../../../model/ItemPedido';
   styleUrl: './detalles-producto.component.css'
 })
 export class DetallesProductoComponent implements OnInit {
-  producto: Producto | null = null;
+  producto!: Producto;
   cantidad: number = 1;
   isLoggedIn: boolean = false;
   usuarioId: number | null = null;
@@ -27,6 +27,17 @@ export class DetallesProductoComponent implements OnInit {
   usuarioTieneValoracion: boolean = false;
   valoracionesUsuario: Valoracion[] = [];
   usuariosValoraciones: Map<number, Usuario> = new Map();
+
+  // Propiedades del modal
+  mostrarModal: boolean = false;
+  modalTitulo: string = '';
+  modalMensaje: string = '';
+  modalTipo: 'info' | 'success' | 'error' | 'confirmacion' = 'info';
+  accionPendiente: (() => void) | null = null;
+
+  // Modal específico para eliminar valoración
+  mostrarModalEliminar: boolean = false;
+  valoracionIdParaEliminar: number | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -143,10 +154,18 @@ export class DetallesProductoComponent implements OnInit {
       }
 
       let carrito: ItemPedido[] = JSON.parse(localStorage.getItem('carrito') || '[]');
-      
+
       // Buscar si el producto ya existe en el carrito
       const itemExistente = carrito.find(item => item.producto.id === this.producto!.id);
-      
+      const cantidadEnCarrito = itemExistente ? itemExistente.cantidad : 0;
+      const cantidadTotal = cantidadEnCarrito + this.cantidad;
+
+      // Verificar que no exceda el stock disponible
+      if (cantidadTotal > this.producto.stock) {
+        this.mostrarModalError('Stock insuficiente', `No puedes añadir ${this.cantidad} unidades. Solo quedan ${this.producto.stock - cantidadEnCarrito} unidades disponibles.`);
+        return;
+      }
+
       if (itemExistente) {
         // Si existe, solo sumar la cantidad
         itemExistente.cantidad += this.cantidad;
@@ -155,13 +174,14 @@ export class DetallesProductoComponent implements OnInit {
         // Si no existe, agregar nuevo item
         carrito.push(new ItemPedido(this.producto, this.cantidad, this.producto.precio * this.cantidad));
       }
-      
+
       localStorage.setItem('carrito', JSON.stringify(carrito));
+      this.mostrarModalExito('Producto añadido', 'Producto añadido al carrito correctamente');
     }
   }
 
-    establecerPuntuacion(puntuacion: number): void {
-      if(!this.nuevaValoracion) {
+  establecerPuntuacion(puntuacion: number): void {
+    if (!this.nuevaValoracion) {
       this.resetNuevaValoracion();
     }
     this.nuevaValoracion!.puntuacion = puntuacion;
@@ -173,7 +193,7 @@ export class DetallesProductoComponent implements OnInit {
     }
 
     if (!this.nuevaValoracion || this.nuevaValoracion.puntuacion === 0) {
-      alert('Por favor, selecciona una puntuación');
+      this.mostrarModalError('Puntuación requerida', 'Por favor, selecciona una puntuación');
       return;
     }
 
@@ -182,9 +202,11 @@ export class DetallesProductoComponent implements OnInit {
         this.resetNuevaValoracion();
         this.cargarProducto(); // Recargar producto y usuarios
         this.cargarValoracionesUsuario(); // Actualizar estado
+        this.mostrarModalExito('Valoración enviada', 'Tu valoración ha sido publicada correctamente');
       },
       error: (error) => {
         console.error('Error al crear valoración:', error);
+        this.mostrarModalError('Error', 'No se pudo enviar la valoración. Inténtalo de nuevo.');
       }
     });
   }
@@ -194,30 +216,107 @@ export class DetallesProductoComponent implements OnInit {
   }
 
   eliminarValoracion(id: number): void {
-    if (confirm('¿Estás seguro de que quieres eliminar esta valoración?')) {
-      this.valoracionService.deleteValoracion(id, this.producto!.id).subscribe({
+    this.valoracionIdParaEliminar = id;
+    this.mostrarModalEliminar = true;
+  }
+
+  confirmarEliminarValoracion(): void {
+    if (this.valoracionIdParaEliminar) {
+      this.valoracionService.deleteValoracion(this.valoracionIdParaEliminar, this.producto!.id).subscribe({
         next: () => {
           this.cargarProducto(); // Recargar producto y usuarios
           this.cargarValoracionesUsuario(); // Actualizar estado
+          this.mostrarModalExito('Valoración eliminada', 'La valoración ha sido eliminada correctamente');
         },
         error: (error) => {
           console.error('Error al eliminar valoración:', error);
+          this.mostrarModalError('Error', 'No se pudo eliminar la valoración. Inténtalo de nuevo.');
         }
       });
     }
+    this.cancelarEliminarValoracion();
   }
 
-  esValoracionDelUsuario(valoracion: Valoracion): boolean {
-    console.log('Valoraciones del usuario:', this.valoracionesUsuario);
-    return this.valoracionesUsuario.some(v => v.id === valoracion.id);
+  cancelarEliminarValoracion(): void {
+    this.mostrarModalEliminar = false;
+    this.valoracionIdParaEliminar = null;
   }
 
-  getUsuarioValoracion(valoracionId: number): Usuario | null {
-    return this.usuariosValoraciones.get(valoracionId) || null;
+  // Métodos del modal
+  mostrarModalInfo(titulo: string, mensaje: string): void {
+    this.modalTitulo = titulo;
+    this.modalMensaje = mensaje;
+    this.modalTipo = 'info';
+    this.mostrarModal = true;
+  }
+
+  mostrarModalExito(titulo: string, mensaje: string): void {
+    this.modalTitulo = titulo;
+    this.modalMensaje = mensaje;
+    this.modalTipo = 'success';
+    this.mostrarModal = true;
+  }
+
+  mostrarModalError(titulo: string, mensaje: string): void {
+    this.modalTitulo = titulo;
+    this.modalMensaje = mensaje;
+    this.modalTipo = 'error';
+    this.mostrarModal = true;
+  }
+
+  mostrarModalConfirmacion(titulo: string, mensaje: string, accion: () => void): void {
+    this.modalTitulo = titulo;
+    this.modalMensaje = mensaje;
+    this.modalTipo = 'confirmacion';
+    this.accionPendiente = accion;
+    this.mostrarModal = true;
+  }
+
+  cerrarModal(): void {
+    this.mostrarModal = false;
+    this.accionPendiente = null;
+  }
+
+  confirmarAccion(): void {
+    if (this.modalTipo === 'confirmacion' && this.accionPendiente) {
+      this.accionPendiente();
+    }
+    this.cerrarModal();
+  }
+
+  cancelarAccion(): void {
+    this.cerrarModal();
+  }
+
+  getModalHeaderClass(): string {
+    switch (this.modalTipo) {
+      case 'success': return 'text-green-600';
+      case 'error': return 'text-red-600';
+      case 'confirmacion': return 'text-orange-600';
+      default: return 'text-blue-600';
+    }
+  }
+
+  getModalButtonClass(): string {
+    switch (this.modalTipo) {
+      case 'success': return 'bg-green-600 hover:bg-green-700';
+      case 'error': return 'bg-red-600 hover:bg-red-700';
+      case 'confirmacion': return 'bg-orange-600 hover:bg-orange-700';
+      default: return 'bg-blue-600 hover:bg-blue-700';
+    }
   }
 
   redirectLogin(): void {
-    this.router.navigate(['login']);
+    this.router.navigate(['/login']);
+  }
+
+  esValoracionDelUsuario(valoracion: Valoracion): boolean {
+    if (!this.isLoggedIn || !this.usuarioId) {
+      return false;
+    }
+    
+    // Verificar si la valoración pertenece al usuario actual
+    return this.valoracionesUsuario.some(v => v.id === valoracion.id);
   }
 
   // Método auxiliar para generar arrays para las estrellas

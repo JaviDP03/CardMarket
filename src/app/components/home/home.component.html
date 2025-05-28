@@ -1,0 +1,97 @@
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+  <!-- Hero Section -->
+  <div class="container mx-auto px-6 py-16">
+    <div class="text-center">
+      <h1 class="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+        El Marketplace de <span class="text-blue-600">Cartas</span> Más Grande
+      </h1>
+      <p class="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+        Encuentra las cartas más raras y completa tu colección.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <button (click)="navigateToCartas()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition duration-300 transform hover:scale-105">
+          Explorar Cartas
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Features Section -->
+  <div class="bg-white py-16">
+    <div class="container mx-auto px-6">
+      <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">
+        ¿Por qué elegir CardMarket?
+      </h2>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="text-center p-6 rounded-lg hover:shadow-lg transition duration-300">
+          <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-900 mb-2">Compras Seguras</h3>
+          <p class="text-gray-600">Garantía de protección al comprador y vendedores verificados</p>
+        </div>
+        
+        <div class="text-center p-6 rounded-lg hover:shadow-lg transition duration-300">
+          <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-900 mb-2">Envío Rápido</h3>
+          <p class="text-gray-600">Entrega express</p>
+        </div>
+        
+        <div class="text-center p-6 rounded-lg hover:shadow-lg transition duration-300">
+          <div class="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold text-gray-900 mb-2">Cartas Auténticas</h3>
+          <p class="text-gray-600">Verificación de autenticidad y calidad garantizada</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Section -->
+  <div class="bg-blue-600 py-16">
+    <div class="container mx-auto px-6">
+      <div class="grid md:grid-cols-4 gap-8 text-center text-white">
+        <div>
+          <div class="text-4xl font-bold mb-2">1M+</div>
+          <div class="text-blue-200">Usuarios Activos</div>
+        </div>
+        <div>
+          <div class="text-4xl font-bold mb-2">5M+</div>
+          <div class="text-blue-200">Cartas Disponibles</div>
+        </div>
+        <div>
+          <div class="text-4xl font-bold mb-2">50K+</div>
+          <div class="text-blue-200">Ventas Diarias</div>
+        </div>
+        <div>
+          <div class="text-4xl font-bold mb-2">99%</div>
+          <div class="text-blue-200">Satisfacción</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA Section -->
+  <div class="bg-gray-900 py-16">
+    <div class="container mx-auto px-6 text-center">
+      <h2 class="text-3xl font-bold text-white mb-4">
+        ¿Listo para comenzar tu aventura?
+      </h2>
+      <p class="text-gray-300 mb-8 max-w-2xl mx-auto">
+        Únete a la comunidad más grande de coleccionistas y encuentra las cartas que siempre has buscado.
+      </p>
+      <button (click)="navigateToLogin()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition duration-300 transform hover:scale-105">
+        Crear Cuenta Gratis
+      </button>
+    </div>
+  </div>
+</div>

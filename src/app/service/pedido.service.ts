@@ -28,6 +28,10 @@ export class PedidoService {
     return this.http.get<Pedido>(`${this.apiUrl}/${id}`);
   }
 
+  getPedidosByUsuario(): Observable<Pedido[]> {
+    return this.http.get<Pedido[]>(`${this.apiUrl}/usuario`);
+  }
+
   deletePedido(id: number): Observable<boolean> {
     return this.http.delete<boolean>(`${this.apiUrl}/${id}`);
   }

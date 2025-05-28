@@ -4,36 +4,42 @@
     <div class="flex flex-col md:flex-row">
       <!-- Imagen del producto -->
       <div class="md:w-1/2 mb-6 md:mb-0">
-        <img [src]="'data:image/jpeg;base64,' + producto?.imagenB64" alt="{{ producto?.nombre }}" class="w-full h-auto rounded-lg object-cover">
+        <img [src]="'data:image/jpeg;base64,' + producto.imagenB64" alt="{{ producto.nombre }}" class="w-full h-auto rounded-lg object-cover">
       </div>
 
       <!-- Detalles del producto -->
       <div class="md:w-1/2 md:pl-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ producto?.nombre }}</h1>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ producto.nombre }}</h1>
         <div class="flex items-center mb-4">
           <div class="flex text-yellow-400">
             <span *ngFor="let _ of [1,2,3,4,5]" class="text-xl">★</span>
           </div>
-          <span class="text-gray-500 ml-2">({{ producto?.valoraciones?.length || 0 }} valoraciones)</span>
+          <span class="text-gray-500 ml-2">({{ producto.valoraciones.length || 0 }} valoraciones)</span>
         </div>
-        <p class="text-gray-600 mb-4">{{ producto?.descripcion }}</p>
+        <p class="text-gray-600 mb-4">{{ producto.descripcion }}</p>
         <div class="flex items-center justify-between mb-4">
-          <span class="text-2xl font-bold text-indigo-700">{{ producto?.precio | currency:'EUR' }}</span>
-          <span class="text-green-600" *ngIf="producto?.stock">En stock: {{ producto?.stock }} unidades</span>
+          <span class="text-2xl font-bold text-indigo-700">{{ producto.precio | currency:'EUR' }}</span>
+          <span class="text-green-600" *ngIf="producto?.stock && producto.stock > 0">En stock: {{ producto.stock }} unidades</span>
           <span class="text-red-600" *ngIf="producto?.stock === 0">Sin stock</span>
         </div>
         <div class="mb-4">
-          <p class="text-gray-700 mb-2">Categoría: <span class="font-semibold">{{ producto?.categoria?.nombre }}</span></p>
+          <p class="text-gray-700 mb-2">Categoría: <span class="font-semibold">{{ producto.categoria.nombre }}</span></p>
         </div>
         <div class="flex items-center">
           <div class="flex items-center mr-4">
             <button (click)="decrementarCantidad()" class="bg-gray-200 text-gray-700 px-3 py-1 rounded-l">-</button>
-            <input type="number" [(ngModel)]="cantidad" min="1" [max]="producto?.stock ?? null" class="w-16 text-center border-gray-200 border-y">
+            <input 
+              type="number" 
+              [(ngModel)]="cantidad" 
+              min="1" 
+              [max]="producto.stock" 
+              readonly
+              class="w-16 text-center border-gray-200 border-y [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
             <button (click)="incrementarCantidad()" class="bg-gray-200 text-gray-700 px-3 py-1 rounded-r">+</button>
           </div>
           <button 
             (click)="agregarAlCarrito()" 
-            [disabled]="producto?.stock === 0"
+            [disabled]="producto.stock === 0"
             class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg disabled:bg-gray-400">
             Añadir al carrito
           </button>
@@ -96,18 +102,18 @@
           <div class="flex items-center">
             <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center mr-3 overflow-hidden">
               <img 
-                *ngIf="getUsuarioValoracion(valoracion.id)?.imagenB64" 
-                [src]="'data:image/jpeg;base64,' + getUsuarioValoracion(valoracion.id)?.imagenB64" 
-                [alt]="getUsuarioValoracion(valoracion.id)?.nombre"
+                *ngIf="usuarioValoracion?.imagenB64" 
+                [src]="'data:image/jpeg;base64,' + usuarioValoracion?.imagenB64" 
+                [alt]="usuarioValoracion?.nombre"
                 class="w-full h-full object-cover">
               <span 
-                *ngIf="!getUsuarioValoracion(valoracion.id)?.imagenB64" 
+                *ngIf="!usuarioValoracion?.imagenB64" 
                 class="font-bold text-indigo-800">
-                {{ getUsuarioValoracion(valoracion.id)?.nombre?.charAt(0) || 'U' }}
+                {{ usuarioValoracion?.nombre?.charAt(0) || 'U' }}
               </span>
             </div>
             <div>
-              <p class="font-semibold">{{ getUsuarioValoracion(valoracion.id)?.nombre || 'Usuario' }}</p>
+              <p class="font-semibold">{{ usuarioValoracion?.nombre || 'Usuario' }}</p>
               <div class="flex text-yellow-400">
                 <span *ngFor="let _ of array(valoracion.puntuacion)">★</span>
                 <span *ngFor="let _ of array(5 - valoracion.puntuacion)" class="text-gray-300">★</span>
@@ -129,6 +135,64 @@
 
     <div *ngIf="!producto?.valoraciones?.length" class="text-center py-6 text-gray-500">
       Este producto aún no tiene valoraciones.
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div *ngIf="mostrarModal" class="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50" (click)="cerrarModal()">
+  <div class="bg-gray-800 text-white rounded-lg p-6 max-w-md w-full mx-4" (click)="$event.stopPropagation()">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-semibold" [ngClass]="getModalHeaderClass()">
+        {{ modalTitulo }}
+      </h3>
+      <button (click)="cerrarModal()" class="text-gray-400 hover:text-gray-300">
+        <span class="text-xl">&times;</span>
+      </button>
+    </div>
+    <div class="mb-6">
+      <p class="text-gray-300">{{ modalMensaje }}</p>
+    </div>
+    <div class="flex justify-end space-x-3">
+      <button 
+        *ngIf="modalTipo === 'confirmacion'" 
+        (click)="cancelarAccion()" 
+        class="px-4 py-2 bg-gray-600 text-gray-300 rounded hover:bg-gray-500">
+        Cancelar
+      </button>
+      <button 
+        (click)="confirmarAccion()" 
+        class="px-4 py-2 rounded text-white" 
+        [ngClass]="getModalButtonClass()">
+        {{ modalTipo === 'confirmacion' ? 'Confirmar' : 'Aceptar' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de confirmación para eliminar valoración -->
+<div *ngIf="mostrarModalEliminar" class="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50" (click)="cancelarEliminarValoracion()">
+  <div class="bg-gray-800 text-white rounded-lg p-6 max-w-md w-full mx-4" (click)="$event.stopPropagation()">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-semibold text-red-400">Eliminar valoración</h3>
+      <button (click)="cancelarEliminarValoracion()" class="text-gray-400 hover:text-gray-300">
+        <span class="text-xl">&times;</span>
+      </button>
+    </div>
+    <div class="mb-6">
+      <p class="text-gray-300">¿Estás seguro de que quieres eliminar esta valoración?</p>
+    </div>
+    <div class="flex justify-end space-x-3">
+      <button 
+        (click)="cancelarEliminarValoracion()" 
+        class="px-4 py-2 bg-gray-600 text-gray-300 rounded hover:bg-gray-500">
+        Cancelar
+      </button>
+      <button 
+        (click)="confirmarEliminarValoracion()" 
+        class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+        Eliminar
+      </button>
     </div>
   </div>
 </div>

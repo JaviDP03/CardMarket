@@ -16,7 +16,7 @@ import { CategoriaService } from '../../../service/categoria.service';
 export class ListarProductosComponent implements OnInit {
   productos: Producto[] = [];
   categoriaActual: string | null = null;
-  loading: boolean = true;
+  loading: boolean = false; // Start with false instead of true
   error: string | null = null;
 
   constructor(
@@ -33,10 +33,12 @@ export class ListarProductosComponent implements OnInit {
   }
 
   loadProductos(): void {
-    this.loading = true;
+    // Reset state
     this.error = null;
+    this.productos = [];
     
     if (this.categoriaActual) {
+      this.loading = true; // Only set loading true when we actually load
       console.log("dos");
       // Normalize category names
       const normalizedCategory = this.categoriaActual
@@ -51,8 +53,8 @@ export class ListarProductosComponent implements OnInit {
           // Only fetch products after we have the category ID
           this.productoService.getProductosByCategoria(idCategoria).subscribe({
             next: (data) => {
-              this.productos = data;
-              this.loading = false;
+              this.productos = data || []; // Ensure productos is never null
+              this.loading = false; // Always stop loading regardless of data length
             },
             error: (err) => {
               this.error = 'Error al cargar los productos por categoría';
@@ -67,6 +69,9 @@ export class ListarProductosComponent implements OnInit {
           console.error(err);
         }
       });
+    } else {
+      // No category selected - ensure loading is false
+      this.loading = false;
     }
   }
 }

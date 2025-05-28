@@ -10,6 +10,9 @@ import { SobreNosotrosComponent } from './components/extra/sobre-nosotros/sobre-
 import { PoliticaComponent } from './components/extra/politica/politica.component';
 import { TerminosComponent } from './components/extra/terminos/terminos.component';
 import { FaqComponent } from './components/extra/faq/faq.component';
+import { NotfoundComponent } from './components/notfound/notfound.component';
+import { HomeComponent } from './components/home/home.component';
+import { ListarPedidosComponent } from './components/listar-pedidos/listar-pedidos.component';
 
 export const routes: Routes = [
     { path: 'login', component: LoginComponent },
@@ -19,9 +22,12 @@ export const routes: Routes = [
     { path: 'perfil/editar', component: EditarPerfilComponent },
     { path: 'productos/:id', component: DetallesProductoComponent },
     { path: 'carrito', component: CarritoComponent },
+    { path: 'mispedidos', component: ListarPedidosComponent },
     { path: 'sobrenosotros', component: SobreNosotrosComponent },
     { path: 'politica', component: PoliticaComponent },
     { path: 'terminos', component: TerminosComponent },
     { path: 'faq', component: FaqComponent },
-    { path: ':nombreCategoria', component: ListarProductosComponent }
+    { path: ':nombreCategoria', component: ListarProductosComponent },
+    { path: '', component: HomeComponent },
+    { path: '**', component: NotfoundComponent }
 ];
