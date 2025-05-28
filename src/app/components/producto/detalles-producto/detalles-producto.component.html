@@ -4,7 +4,7 @@
     <div class="flex flex-col md:flex-row">
       <!-- Imagen del producto -->
       <div class="md:w-1/2 mb-6 md:mb-0">
-        <img [src]="producto?.urlImagen" alt="{{ producto?.nombre }}" class="w-full h-auto rounded-lg object-cover">
+        <img [src]="'data:image/jpeg;base64,' + producto?.imagenB64" alt="{{ producto?.nombre }}" class="w-full h-auto rounded-lg object-cover">
       </div>
 
       <!-- Detalles del producto -->
@@ -96,12 +96,12 @@
           <div class="flex items-center">
             <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center mr-3 overflow-hidden">
               <img 
-                *ngIf="getUsuarioValoracion(valoracion.id)?.urlImagen" 
-                [src]="getUsuarioValoracion(valoracion.id)?.urlImagen" 
+                *ngIf="getUsuarioValoracion(valoracion.id)?.imagenB64" 
+                [src]="'data:image/jpeg;base64,' + getUsuarioValoracion(valoracion.id)?.imagenB64" 
                 [alt]="getUsuarioValoracion(valoracion.id)?.nombre"
                 class="w-full h-full object-cover">
               <span 
-                *ngIf="!getUsuarioValoracion(valoracion.id)?.urlImagen" 
+                *ngIf="!getUsuarioValoracion(valoracion.id)?.imagenB64" 
                 class="font-bold text-indigo-800">
                 {{ getUsuarioValoracion(valoracion.id)?.nombre?.charAt(0) || 'U' }}
               </span>

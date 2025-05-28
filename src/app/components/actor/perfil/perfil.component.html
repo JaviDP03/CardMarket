@@ -21,10 +21,10 @@
         <!-- User avatar and basic info -->
         <div class="flex flex-col md:flex-row items-center md:items-start gap-6">
           <div class="flex-shrink-0">
-            <div *ngIf="currentUser?.urlImagen" class="h-32 w-32 rounded-full border-4 border-blue-500 overflow-hidden">
-              <img [src]="currentUser.urlImagen" alt="Profile image" class="h-full w-full object-cover">
+            <div *ngIf="currentUser?.imagenB64" class="h-32 w-32 rounded-full border-4 border-blue-500 overflow-hidden">
+              <img [src]="'data:image/jpeg;base64,' + currentUser.imagenB64" alt="Profile image" class="h-full w-full object-cover">
             </div>
-            <div *ngIf="!currentUser?.urlImagen" class="h-32 w-32 rounded-full bg-gray-300 flex items-center justify-center text-3xl text-gray-600 font-bold border-4 border-blue-500">
+            <div *ngIf="!currentUser?.imagenB64" class="h-32 w-32 rounded-full bg-gray-300 flex items-center justify-center text-3xl text-gray-600 font-bold border-4 border-blue-500">
               {{ currentUser.nombreUsuario | slice:0:1 }}
             </div>
           </div>

@@ -43,8 +43,15 @@
           <!-- User Profile Dropdown -->
           <div class="relative">
             <div class="flex items-center space-x-2 cursor-pointer" (click)="toggleProfileDropdown()">
-              <div class="w-8 h-8 rounded-full bg-yellow-400 flex items-center justify-center text-purple-900 font-bold">
-                {{userInitials}}
+              <!-- Profile Picture or Initials -->
+              <div class="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center" 
+                   [ngClass]="profilePicture ? 'bg-transparent' : 'bg-yellow-400'">
+                <img *ngIf="profilePicture" 
+                     [src]="'data:image/jpeg;base64,' + profilePicture" 
+                     alt="Profile Picture"
+                     class="w-full h-full object-cover rounded-full">
+                <span *ngIf="!profilePicture" 
+                      class="text-purple-900 font-bold">{{userInitials}}</span>
               </div>
               <span class="hidden sm:inline-block hover:text-yellow-300 transition-colors duration-200">{{username}}</span>
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -53,13 +60,13 @@
             </div>
             
             <!-- Dropdown Menu -->
-            <div *ngIf="profileDropdownOpen" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-xl z-20">
+            <div *ngIf="profileDropdownOpen" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-xl z-20 border border-gray-200">
               <div class="py-1">
-                <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-100 cursor-pointer"
+                <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-100 cursor-pointer transition-colors duration-200"
                   (click)="navigateTo('perfil'); toggleProfileDropdown()">
                   Mi Perfil
                 </a>
-                <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-100 cursor-pointer"
+                <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-100 cursor-pointer transition-colors duration-200"
                   (click)="logout(); toggleProfileDropdown()">
                   Cerrar Sesión
                 </a>

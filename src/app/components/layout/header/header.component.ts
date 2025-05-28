@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, HostListener, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
 
@@ -16,15 +16,26 @@ export class HeaderComponent {
   token: string | null = sessionStorage.getItem("token");
   username!: any;
   userInitials!: string;
+  profilePicture!: string | null;
   cartItemCount = 0;
 
   constructor(
     private router: Router,
+    private elementRef: ElementRef
   ) {
      if (this.token !== null && this.token) {
       this.isLoggedIn = true;
-      this.username = jwtDecode(this.token).sub;
+      const decodedToken: any = jwtDecode(this.token);
+      this.username = decodedToken.sub;
       this.userInitials = this.getUserInitials(this.username);
+      this.profilePicture = decodedToken.profilePicture || null;
+    }
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event): void {
+    if (!this.elementRef.nativeElement.contains(event.target)) {
+      this.profileDropdownOpen = false;
     }
   }
 

@@ -21,10 +21,12 @@ export class EditarPerfilComponent {
   profileForm!: FormGroup;
   
   // Avatar related properties
-  urlImagen: string | null = null;
+  imagenB64: string | null = null;
   showAvatarModal: boolean = false;
-  newUrlImagen: string = '';
-  isPreviewError: boolean = false;
+  selectedFile: File | null = null;
+  previewImage: string | null = null;
+  fileError: string | null = null;
+  isConvertingToBase64: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -97,7 +99,7 @@ export class EditarPerfilComponent {
       fechaNacimiento: [''],
       password: ['', [Validators.minLength(6)]],
       confirmPassword: [''],
-      urlImagen: [''],
+      imagenB64: [''],
       direcciones: this.fb.array([])
     }, { validators: this.passwordMatchValidator });
   }
@@ -128,11 +130,11 @@ export class EditarPerfilComponent {
       nombre: this.currentUser.nombre,
       apellido: this.currentUser.apellido,
       email: this.currentUser.email,
-      urlImagen: this.currentUser.urlImagen || ''
+      imagenB64: this.currentUser.imagenB64 || ''
     });
 
     // Set avatar URL if it exists
-    this.urlImagen = this.currentUser.urlImagen || null;
+    this.imagenB64 = this.currentUser.imagenB64 || null;
 
     if (!this.isAdmin) {
       this.profileForm.patchValue({
@@ -221,47 +223,95 @@ export class EditarPerfilComponent {
   // Avatar modal methods
   openAvatarModal(): void {
     this.showAvatarModal = true;
-    this.newUrlImagen = this.urlImagen || '';
-    this.isPreviewError = false;
+    this.selectedFile = null;
+    this.previewImage = null;
+    this.fileError = null;
   }
 
   closeAvatarModal(): void {
     this.showAvatarModal = false;
-    this.newUrlImagen = '';
+    this.selectedFile = null;
+    this.previewImage = null;
+    this.fileError = null;
   }
 
-  saveAvatar(): void {
-    if (this.newUrlImagen && !this.isPreviewError) {
-      this.urlImagen = this.newUrlImagen;
-      // Update the form control value
-      this.profileForm.patchValue({
-        urlImagen: this.newUrlImagen
-      });
-      this.closeAvatarModal();
-    }
-  }
-
-  // Method to check if image URL is valid
-  checkImageUrl(url: string): void {
-    if (!url) {
-      this.isPreviewError = false;
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (!file) {
+      this.selectedFile = null;
+      this.previewImage = null;
+      this.fileError = null;
       return;
     }
 
-    const img = new Image();
-    img.onload = () => {
-      this.isPreviewError = false;
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      this.fileError = 'Por favor selecciona un archivo de imagen válido.';
+      this.selectedFile = null;
+      this.previewImage = null;
+      return;
+    }
+
+    // Validate file size (5MB max)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      this.fileError = 'El archivo es demasiado grande. El tamaño máximo es 5MB.';
+      this.selectedFile = null;
+      this.previewImage = null;
+      return;
+    }
+
+    this.selectedFile = file;
+    this.fileError = null;
+
+    // Create preview
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      this.previewImage = e.target.result;
     };
-    img.onerror = () => {
-      this.isPreviewError = true;
-    };
-    img.src = url;
+    reader.readAsDataURL(file);
   }
 
-  // Watch for changes in the avatar URL input
-  ngDoCheck(): void {
-    if (this.showAvatarModal && this.newUrlImagen) {
-      this.checkImageUrl(this.newUrlImagen);
+  saveAvatar(): void {
+    if (this.selectedFile && !this.fileError) {
+      this.isConvertingToBase64 = true;
+      
+      this.convertFileToBase64(this.selectedFile).then((base64) => {
+        this.imagenB64 = base64;
+        // Update the form control value with base64
+        this.profileForm.patchValue({
+          imagenB64: base64
+        });
+        this.isConvertingToBase64 = false;
+        this.closeAvatarModal();
+      }).catch((error) => {
+        console.error('Error converting file to base64:', error);
+        this.fileError = 'Error al procesar la imagen. Por favor intenta de nuevo.';
+        this.isConvertingToBase64 = false;
+      });
     }
+  }
+
+  private convertFileToBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      
+      reader.onload = () => {
+        try {
+          const result = reader.result as string;
+          // Remove the data URL prefix (data:image/jpeg;base64,)
+          const base64String = result.split(',')[1];
+          resolve(base64String);
+        } catch (error) {
+          reject(error);
+        }
+      };
+      
+      reader.onerror = () => {
+        reject(new Error('Failed to read file'));
+      };
+      
+      reader.readAsDataURL(file);
+    });
   }
 }

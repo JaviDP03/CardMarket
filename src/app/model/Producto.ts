@@ -7,16 +7,16 @@ export class Producto {
     descripcion: string;
     precio: number;
     stock: number;
-    urlImagen: string;
+    imagenB64: string;
     categoria: Categoria;
     valoraciones: Valoracion[];
 
-	constructor(nombre: string, descripcion: string, precio: number, stock: number, urlImagen: string, categoria: Categoria) {
+	constructor(nombre: string, descripcion: string, precio: number, stock: number, imagenB64: string, categoria: Categoria) {
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.precio = precio;
         this.stock = stock;
-        this.urlImagen = urlImagen;
+        this.imagenB64 = imagenB64;
         this.categoria = categoria;
         this.valoraciones = [];
 	}
