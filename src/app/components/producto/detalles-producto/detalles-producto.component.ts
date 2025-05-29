@@ -324,3 +324,7 @@ export class DetallesProductoComponent implements OnInit {
     return Array(n);
   }
 }
+function registerLocaleData(localeEs: (string | number | number[] | (string | undefined)[] | ((val: number) => number) | (string[] | undefined)[] | { AUD: (string | undefined)[]; BRL: (string | undefined)[]; BYN: (string | undefined)[]; CAD: (string | undefined)[]; CNY: (string | undefined)[]; EGP: never[]; ESP: string[]; GBP: (string | undefined)[]; HKD: (string | undefined)[]; ILS: (string | undefined)[]; INR: (string | undefined)[]; JPY: (string | undefined)[]; KRW: (string | undefined)[]; MXN: (string | undefined)[]; NZD: (string | undefined)[]; PHP: (string | undefined)[]; RON: (string | undefined)[]; THB: string[]; TWD: (string | undefined)[]; USD: string[]; XAF: never[]; XCD: (string | undefined)[]; XOF: never[]; } | undefined)[]) {
+  throw new Error('Function not implemented.');
+}
+

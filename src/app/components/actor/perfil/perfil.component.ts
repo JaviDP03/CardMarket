@@ -60,4 +60,8 @@ export class PerfilComponent implements OnInit {
   editProfile() {
     this.router.navigate(['/perfil/editar']);
   }
+
+  viewOrders() {
+    this.router.navigate(['/mispedidos']);
+  }
 }

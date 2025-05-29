@@ -74,7 +74,14 @@
               
               <div class="bg-gray-50 p-4 rounded-md">
                 <p class="text-sm text-gray-500">Pedidos realizados</p>
-                <p class="text-lg font-medium">{{ regularUser.pedidos.length || 0 }} pedidos</p>
+                <div class="flex items-center justify-between">
+                  <p class="text-lg font-medium">{{ regularUser.pedidos.length || 0 }} pedidos</p>
+                  <button 
+                    (click)="viewOrders()" 
+                    class="bg-green-600 hover:bg-green-700 text-white text-sm font-medium py-1 px-3 rounded-md transition duration-200">
+                    Ver pedidos
+                  </button>
+                </div>
               </div>
             </ng-container>
 

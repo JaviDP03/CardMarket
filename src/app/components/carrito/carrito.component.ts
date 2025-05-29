@@ -154,7 +154,7 @@ export class CarritoComponent implements OnInit {
           if (this.showSuccessModal) {
             this.closeModalAndRedirect();
           }
-        }, 3000);
+        }, 15000);
       },
       error: error => {
         console.error('Error creating order:', error);
