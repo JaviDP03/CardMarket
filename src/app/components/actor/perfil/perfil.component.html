@@ -98,11 +98,11 @@
           <div class="bg-blue-50 p-6 rounded-lg">
             <p class="text-gray-700 mb-4">Como administrador, tienes acceso a funciones adicionales del sistema:</p>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <button class="bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2">
-                <span>Gestionar Usuarios</span>
-              </button>
-              <button class="bg-purple-600 hover:bg-purple-700 text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2">
+              <button (click)="gestionarProductos()" class="bg-purple-600 hover:bg-purple-700 text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2">
                 <span>Gestionar Productos</span>
+              </button>
+              <button (click)="backupDatabase()" class="bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2">
+                <span>Crear Copia de Seguridad</span>
               </button>
             </div>
           </div>
@@ -114,6 +114,55 @@
             Editar Perfil
           </button>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Backup Modal -->
+<div *ngIf="showBackupModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center">
+  <div class="relative bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+    <div class="p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold text-gray-900">Copia de Seguridad de Base de Datos</h3>
+        <button (click)="closeBackupModal()" class="text-gray-400 hover:text-gray-600">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+      
+      <!-- Loading state -->
+      <div *ngIf="backupLoading" class="text-center py-4">
+        <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-green-500 mx-auto mb-3"></div>
+        <p class="text-gray-600">Creando copia de seguridad...</p>
+      </div>
+      
+      <!-- Success state -->
+      <div *ngIf="!backupLoading && backupFile" class="text-center py-4">
+        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+          <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+        </div>
+        <p class="text-gray-800 font-medium mb-4">¡Copia de seguridad creada exitosamente!</p>
+        <button (click)="downloadBackup()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition duration-200 w-full">
+          Descargar Archivo
+        </button>
+      </div>
+      
+      <!-- Error state -->
+      <div *ngIf="!backupLoading && backupError" class="text-center py-4">
+        <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3">
+          <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </div>
+        <p class="text-red-600 font-medium mb-2">Error al crear la copia de seguridad</p>
+        <p class="text-gray-600 text-sm mb-4">{{ backupError }}</p>
+        <button (click)="retryBackup()" class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-md transition duration-200 w-full">
+          Reintentar
+        </button>
       </div>
     </div>
   </div>

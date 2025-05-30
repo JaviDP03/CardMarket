@@ -31,4 +31,8 @@ export class AdminService {
   deleteAdmin(id: number): Observable<boolean> {
     return this.http.delete<boolean>(`${this.apiUrl}/${id}`);
   }
+
+  backupDatabase(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/backupbd`);
+  }
 }
