@@ -12,9 +12,9 @@ import { TerminosComponent } from './components/extra/terminos/terminos.componen
 import { FaqComponent } from './components/extra/faq/faq.component';
 import { NotfoundComponent } from './components/notfound/notfound.component';
 import { HomeComponent } from './components/home/home.component';
-import { ListarPedidosComponent } from './components/listar-pedidos/listar-pedidos.component';
 import { ProductosAdminComponent } from './components/producto/productos-admin/productos-admin.component';
 import { FormProductoComponent } from './components/producto/form-producto/form-producto.component';
+import { ListarPedidosComponent } from './components/actor/listar-pedidos/listar-pedidos.component';
 
 export const routes: Routes = [
     { path: 'login', component: LoginComponent },

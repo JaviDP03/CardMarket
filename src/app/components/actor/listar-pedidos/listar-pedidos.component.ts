@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PedidoService } from '../../service/pedido.service';
-import { Pedido } from '../../model/Pedido';
+import { PedidoService } from '../../../service/pedido.service';
+import { Pedido } from '../../../model/Pedido';
 
 @Component({
   selector: 'app-listar-pedidos',

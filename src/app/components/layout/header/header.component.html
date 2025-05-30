@@ -102,13 +102,11 @@
     <div *ngIf="mobileMenuOpen" class="md:hidden py-3 mt-2">
       <nav class="flex flex-col space-y-3">
         <a class="hover:text-yellow-300 font-medium cursor-pointer transition-colors duration-200 py-2 border-b border-purple-400"
-          (click)="navigateTo('home'); toggleMobileMenu()">Inicio</a>
+          (click)="navigateTo('/'); toggleMobileMenu()">Inicio</a>
         <a class="hover:text-yellow-300 font-medium cursor-pointer transition-colors duration-200 py-2 border-b border-purple-400"
-          (click)="navigateTo('cards'); toggleMobileMenu()">Cartas</a>
+          (click)="navigateTo('cartas'); toggleMobileMenu()">Cartas</a>
         <a class="hover:text-yellow-300 font-medium cursor-pointer transition-colors duration-200 py-2 border-b border-purple-400"
-          (click)="navigateTo('collections'); toggleMobileMenu()">Colecciones</a>
-        <a class="hover:text-yellow-300 font-medium cursor-pointer transition-colors duration-200 py-2 border-b border-purple-400"
-          (click)="navigateTo('events'); toggleMobileMenu()">Eventos</a>
+          (click)="navigateTo('colecciones'); toggleMobileMenu()">Colecciones</a>
         
         <!-- Auth options for mobile menu when user is logged in -->
         <div *ngIf="isLoggedIn" class="pt-2 border-t border-purple-400">
