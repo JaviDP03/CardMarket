@@ -1,12 +1,10 @@
 <div class="min-h-screen bg-gray-50 py-8">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <!-- Header -->
     <div class="mb-8">
       <h1 class="text-3xl font-bold text-gray-900">Administración de Productos</h1>
       <p class="mt-2 text-gray-600">Gestiona todos los productos del sistema</p>
     </div>
 
-    <!-- Create Button -->
     <div class="mb-6">
       <button 
         (click)="crearProducto()"
@@ -18,13 +16,11 @@
       </button>
     </div>
 
-    <!-- Loading State -->
     <div *ngIf="loading" class="bg-white shadow-sm rounded-lg p-6 text-center">
       <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
       <p class="mt-2 text-gray-600">Cargando productos...</p>
     </div>
 
-    <!-- Products List -->
     <div *ngIf="!loading" class="bg-white shadow-sm rounded-lg overflow-hidden">
       <div class="px-6 py-4 border-b border-gray-200">
         <h2 class="text-lg font-medium text-gray-900">Lista de Productos</h2>
@@ -37,7 +33,6 @@
           <div class="flex items-center justify-between">
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-4">
-                <!-- Product Image -->
                 <div class="flex-shrink-0">
                   <img 
                     [src]="producto.imagenB64 ? 'data:image/jpeg;base64,' + producto.imagenB64 : '/assets/placeholder-product.jpg'" 
@@ -45,7 +40,6 @@
                     class="w-16 h-16 rounded-lg object-cover">
                 </div>
                 
-                <!-- Product Info -->
                 <div class="flex-1 min-w-0">
                   <h3 class="text-lg font-medium text-gray-900 truncate">
                     {{ producto.nombre }}
@@ -68,7 +62,6 @@
               </div>
             </div>
             
-            <!-- Action Buttons -->
             <div class="flex items-center gap-2 ml-4">
               <button 
                 (click)="editarProducto(producto.id)"
@@ -96,7 +89,6 @@
         </div>
       </div>
       
-      <!-- Empty State -->
       <div *ngIf="productos.length === 0" class="px-6 py-12 text-center">
         <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
@@ -108,7 +100,6 @@
       </div>
     </div>
 
-    <!-- Delete Confirmation Modal -->
     <div *ngIf="showDeleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
       <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
         <div class="mt-3 text-center">
@@ -137,6 +128,33 @@
               (click)="confirmDelete()"
               class="flex-1 px-4 py-2 bg-red-600 text-white text-base font-medium rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
               Eliminar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="showErrorModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+      <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3 text-center">
+          <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+            <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M6 18L18 6M6 6l12 12">
+              </path>
+            </svg>
+          </div>
+          <h3 class="text-lg leading-6 font-medium text-gray-900 mt-5">Error al eliminar</h3>
+          <div class="mt-2 px-7 py-3">
+            <p class="text-sm text-gray-500">
+              {{ errorMessage }}
+            </p>
+          </div>
+          <div class="flex justify-center px-4 py-3">
+            <button 
+              (click)="closeErrorModal()"
+              class="px-6 py-2 bg-blue-600 text-white text-base font-medium rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+              Entendido
             </button>
           </div>
         </div>

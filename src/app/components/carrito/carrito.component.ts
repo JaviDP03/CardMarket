@@ -81,7 +81,6 @@ export class CarritoComponent implements OnInit {
     if (this.currentUser.direcciones && this.currentUser.direcciones.length > 0) {
       this.direcciones = this.currentUser.direcciones;
     } else {
-      // Try to load from separate localStorage key
       const addressesStr = localStorage.getItem(`addresses_${this.currentUser.id}`);
       if (addressesStr) {
         try {
@@ -99,15 +98,12 @@ export class CarritoComponent implements OnInit {
     if (item) {
       const newQuantity = item.cantidad + change;
       
-      // Check minimum quantity
       if (newQuantity < 1) {
         return;
       }
       
-      // Check stock availability
       if (newQuantity > item.producto.stock) {
         this.stockWarning = `Solo hay ${item.producto.stock} unidades disponibles de ${item.producto.nombre}`;
-        // Clear warning after 3 seconds
         setTimeout(() => {
           this.stockWarning = null;
         }, 3000);
@@ -135,7 +131,7 @@ export class CarritoComponent implements OnInit {
   }
 
   getShipping(): number {
-    return this.cartItems.length > 0 ? 5 : 0;
+    return 0;
   }
 
   getTotal(): number {
@@ -159,15 +155,12 @@ export class CarritoComponent implements OnInit {
     this.pedidoService.createPedido(pedido).subscribe({
       next: response => {
         console.log('Order created successfully:', response);
-        // Clear cart after successful order
         this.cartItems = [];
         localStorage.removeItem('carrito');
         this.isLoading = false;
         
-        // Show success modal
         this.showSuccessModal = true;
         
-        // Auto redirect after 3 seconds if user doesn't click the button
         setTimeout(() => {
           if (this.showSuccessModal) {
             this.closeModalAndRedirect();

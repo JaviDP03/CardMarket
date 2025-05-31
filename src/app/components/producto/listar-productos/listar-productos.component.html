@@ -7,23 +7,19 @@
     </div>
   </div>
 
-  <!-- Loading indicator -->
   <div *ngIf="loading" class="flex flex-col items-center justify-center py-10">
     <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
     <p class="mt-4 text-gray-600">Cargando productos...</p>
   </div>
 
-  <!-- Error message -->
   <div *ngIf="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
     {{ error }}
   </div>
 
-  <!-- No products message -->
   <div *ngIf="!loading && !error && productos.length === 0" class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative mb-4">
     No hay productos disponibles en esta categoría.
   </div>
 
-  <!-- Products grid -->
   <div *ngIf="!loading && !error && productos.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     <div class="w-full" *ngFor="let producto of productos">
       <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">

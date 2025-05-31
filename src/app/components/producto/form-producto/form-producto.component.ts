@@ -96,12 +96,10 @@ export class FormProductoComponent implements OnInit {
   getImageSrc(): string {
     if (!this.producto.imagenB64) return '';
     
-    // Si ya tiene el prefijo data:image, devolverlo tal como está
     if (this.producto.imagenB64.startsWith('data:image/')) {
       return this.producto.imagenB64;
     }
     
-    // Si no tiene el prefijo, añadirlo (para imágenes cargadas desde el servidor)
     return `data:image/jpeg;base64,${this.producto.imagenB64}`;
   }
 

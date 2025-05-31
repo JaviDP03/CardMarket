@@ -30,14 +30,12 @@ export class DetallesProductoComponent implements OnInit {
   usuariosValoraciones: Map<number, Usuario> = new Map();
   mediaPuntuacion: number = 0;
 
-  // Propiedades del modal
   mostrarModal: boolean = false;
   modalTitulo: string = '';
   modalMensaje: string = '';
   modalTipo: 'info' | 'success' | 'error' | 'confirmacion' = 'info';
   accionPendiente: (() => void) | null = null;
 
-  // Modal específico para eliminar valoración
   mostrarModalEliminar: boolean = false;
   valoracionIdParaEliminar: number | null = null;
 
@@ -95,7 +93,6 @@ export class DetallesProductoComponent implements OnInit {
           this.producto = producto;
           this.calcularMediaPuntuacion();
           this.cargarUsuariosValoraciones();
-          // Solo verificar si ya tenemos las valoraciones del usuario cargadas
           if (this.isLoggedIn && this.valoracionesUsuario.length > 0) {
             this.verificarValoracionUsuario();
           }
@@ -106,7 +103,6 @@ export class DetallesProductoComponent implements OnInit {
 
   private cargarUsuariosValoraciones(): void {
     if (this.producto?.valoraciones && this.producto.valoraciones.length > 0) {
-      // Limpiar el mapa antes de cargar nuevos usuarios
       this.usuariosValoraciones.clear();
 
       this.producto.valoraciones.forEach(valoracion => {
@@ -116,7 +112,6 @@ export class DetallesProductoComponent implements OnInit {
           },
           error: (error) => {
             console.error('Error al obtener usuario de valoración:', error);
-            // En caso de error, crear un usuario por defecto
             this.usuariosValoraciones.set(valoracion.id, {
               id: 0,
               nombre: 'Usuario',
@@ -133,16 +128,6 @@ export class DetallesProductoComponent implements OnInit {
       this.usuarioTieneValoracion = this.valoracionesUsuario.some(
         valoracion => this.producto?.valoraciones?.some(pv => pv.id === valoracion.id)
       );
-      // Debug: Log para verificar las valoraciones
-      console.log('Valoraciones del usuario:', this.valoracionesUsuario);
-      console.log('Valoraciones del producto:', this.producto?.valoraciones);
-      console.log('Usuario tiene valoración:', this.usuarioTieneValoracion);
-      
-      // Debug adicional para cada valoración
-      this.valoracionesUsuario.forEach(userVal => {
-        const encontrada = this.producto?.valoraciones?.find(prodVal => prodVal.id === userVal.id);
-        console.log(`Valoración usuario ${userVal.id} encontrada en producto:`, encontrada);
-      });
     }
   }
 
@@ -159,7 +144,6 @@ export class DetallesProductoComponent implements OnInit {
   }
 
   agregarAlCarrito(): void {
-    // Prevenir que admins añadan al carrito
     if (this.isAdmin) {
       this.mostrarModalError('Acción no permitida', 'Los administradores no pueden añadir productos al carrito.');
       return;
@@ -172,23 +156,19 @@ export class DetallesProductoComponent implements OnInit {
 
       let carrito: ItemPedido[] = JSON.parse(localStorage.getItem('carrito') || '[]');
 
-      // Buscar si el producto ya existe en el carrito
       const itemExistente = carrito.find(item => item.producto.id === this.producto!.id);
       const cantidadEnCarrito = itemExistente ? itemExistente.cantidad : 0;
       const cantidadTotal = cantidadEnCarrito + this.cantidad;
 
-      // Verificar que no exceda el stock disponible
       if (cantidadTotal > this.producto.stock) {
         this.mostrarModalError('Stock insuficiente', `No puedes añadir ${this.cantidad} unidades. Solo quedan ${this.producto.stock - cantidadEnCarrito} unidades disponibles.`);
         return;
       }
 
       if (itemExistente) {
-        // Si existe, solo sumar la cantidad
         itemExistente.cantidad += this.cantidad;
         itemExistente.total = itemExistente.producto.precio * itemExistente.cantidad;
       } else {
-        // Si no existe, agregar nuevo item
         carrito.push(new ItemPedido(this.producto, this.cantidad, this.producto.precio * this.cantidad));
       }
 
@@ -205,7 +185,6 @@ export class DetallesProductoComponent implements OnInit {
   }
 
   enviarValoracion(): void {
-    // Prevenir que admins dejen valoraciones
     if (this.isAdmin) {
       this.mostrarModalError('Acción no permitida', 'Los administradores no pueden dejar valoraciones.');
       return;
@@ -223,8 +202,8 @@ export class DetallesProductoComponent implements OnInit {
     this.valoracionService.createValoracion(this.producto!.id, this.nuevaValoracion).subscribe({
       next: (valoracionCreada) => {
         this.resetNuevaValoracion();
-        this.cargarProducto(); // Recargar producto y usuarios
-        this.cargarValoracionesUsuario(); // Actualizar estado
+        this.cargarProducto();
+        this.cargarValoracionesUsuario();
         this.mostrarModalExito('Valoración enviada', 'Tu valoración ha sido publicada correctamente');
       },
       error: (error) => {
@@ -239,14 +218,12 @@ export class DetallesProductoComponent implements OnInit {
   }
 
   eliminarValoracion(id: number): void {
-    // Verificar si el usuario puede eliminar esta valoración
     const valoracion = this.producto?.valoraciones?.find(v => v.id === id);
     if (!valoracion) {
       this.mostrarModalError('Error', 'Valoración no encontrada.');
       return;
     }
 
-    // Los admins pueden eliminar cualquier valoración, los usuarios solo sus propias valoraciones
     if (!this.isAdmin && !this.esValoracionDelUsuario(valoracion)) {
       this.mostrarModalError('Acción no permitida', 'Solo puedes eliminar tus propias valoraciones.');
       return;
@@ -260,8 +237,8 @@ export class DetallesProductoComponent implements OnInit {
     if (this.valoracionIdParaEliminar) {
       this.valoracionService.deleteValoracion(this.valoracionIdParaEliminar, this.producto!.id).subscribe({
         next: () => {
-          this.cargarProducto(); // Recargar producto y usuarios
-          this.cargarValoracionesUsuario(); // Actualizar estado
+          this.cargarProducto();
+          this.cargarValoracionesUsuario();
           this.mostrarModalExito('Valoración eliminada', 'La valoración ha sido eliminada correctamente');
         },
         error: (error) => {
@@ -278,7 +255,6 @@ export class DetallesProductoComponent implements OnInit {
     this.valoracionIdParaEliminar = null;
   }
 
-  // Métodos del modal
   mostrarModalInfo(titulo: string, mensaje: string): void {
     this.modalTitulo = titulo;
     this.modalMensaje = mensaje;
@@ -352,28 +328,23 @@ export class DetallesProductoComponent implements OnInit {
       return false;
     }
     
-    // Debug logging
     console.log('Verificando valoración ID:', valoracion.id);
     console.log('Valoraciones del usuario:', this.valoracionesUsuario.map(v => v.id));
     
-    // Para usuarios normales, verificar si la valoración pertenece al usuario actual
     const esDelUsuario = this.valoracionesUsuario.some(v => v.id === valoracion.id);
     console.log('Es valoración del usuario:', esDelUsuario);
     
     return esDelUsuario;
   }
 
-  // Método auxiliar para generar arrays para las estrellas
   array(n: number): any[] {
     return Array(n);
   }
 
-  // Método para obtener el usuario de una valoración específica
   getUsuarioValoracion(valoracionId: number): Usuario | null {
     return this.usuariosValoraciones.get(valoracionId) || null;
   }
 
-  // Método para calcular la media de puntuación
   private calcularMediaPuntuacion(): void {
     if (this.producto?.valoraciones && this.producto.valoraciones.length > 0) {
       const suma = this.producto.valoraciones.reduce((total, valoracion) => total + valoracion.puntuacion, 0);
@@ -383,7 +354,6 @@ export class DetallesProductoComponent implements OnInit {
     }
   }
 
-  // Método para obtener array de estrellas según la media
   getEstrellasPuntuacion(): { completas: number[], medias: number[], vacias: number[] } {
     const puntuacionRedondeada = Math.round(this.mediaPuntuacion * 2) / 2; // Redondear a 0.5
     const estrellasCompletas = Math.floor(puntuacionRedondeada);

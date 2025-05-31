@@ -28,19 +28,15 @@ export class RegistroComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // Detectar si la ruta es para admin
     this.route.url.subscribe(url => {
-      // Verificar si está en la ruta de admin
       this.isAdmin = this.route.snapshot.url.some(segment => segment.path === 'admin');
       this.initializeForm();
     });
   }
 
-  // Getter para acceder fácilmente a los controles del formulario
   get f() { return this.registroForm.controls; }
 
   initializeForm(): void {
-    // Campos comunes para ambos tipos de usuarios
     const commonFields = {
       nombreUsuario: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
@@ -51,12 +47,10 @@ export class RegistroComponent implements OnInit {
     };
 
     if (this.isAdmin) {
-      // Formulario para administradores (solo campos comunes)
       this.registroForm = this.formBuilder.group({
         ...commonFields
       });
     } else {
-      // Formulario para usuarios normales (campos comunes + específicos)
       this.registroForm = this.formBuilder.group({
         ...commonFields,
         telefono: ['', [Validators.required, Validators.pattern('^[0-9]{9}$')]],
@@ -64,13 +58,11 @@ export class RegistroComponent implements OnInit {
       });
     }
 
-    // Añadir validador personalizado para confirmar contraseña
     this.registroForm.controls['confirmContrasenna'].addValidators(
       this.mustMatch(this.registroForm.controls['contrasenna'])
     );
   }
 
-  // Validador personalizado para verificar que las contraseñas coinciden
   mustMatch(passwordControl: any) {
     return (control: any) => {
       if (control.value !== passwordControl.value) {
@@ -83,13 +75,11 @@ export class RegistroComponent implements OnInit {
   onSubmit(): void {
     this.submitted = true;
 
-    // Detener si el formulario es inválido
     if (this.registroForm.invalid) {
       return;
     }
 
     if (this.isAdmin) {
-      // Crear un objeto Admin (usando la estructura de Actor)
       const admin = this.registroForm.value;
 
       this.adminService.createAdmin(admin).subscribe({
@@ -100,7 +90,6 @@ export class RegistroComponent implements OnInit {
             this.registroError = 'Error al registrar administrador. El usuario ya existe o hay datos inválidos.';
             this.showErrorAlert = true;
             
-            // Auto dismiss after 5 seconds
             setTimeout(() => {
               this.dismissError();
             }, 5000);
@@ -111,14 +100,12 @@ export class RegistroComponent implements OnInit {
           this.registroError = 'Error al registrar administrador. Por favor, intente nuevamente.';
           this.showErrorAlert = true;
           
-          // Auto dismiss after 5 seconds
           setTimeout(() => {
             this.dismissError();
           }, 5000);
         }
       });
     } else {
-      // Crear un objeto Usuario usando el constructor 
       const usuario = this.registroForm.value;
       console.log(usuario);
 
@@ -130,7 +117,6 @@ export class RegistroComponent implements OnInit {
             this.registroError = 'Error al registrar usuario. El usuario ya existe o hay datos inválidos.';
             this.showErrorAlert = true;
             
-            // Auto dismiss after 5 seconds
             setTimeout(() => {
               this.dismissError();
             }, 5000);
@@ -141,7 +127,6 @@ export class RegistroComponent implements OnInit {
           this.registroError = 'Error al registrar usuario. Por favor, intente nuevamente.';
           this.showErrorAlert = true;
           
-          // Auto dismiss after 5 seconds
           setTimeout(() => {
             this.dismissError();
           }, 5000);
@@ -154,6 +139,6 @@ export class RegistroComponent implements OnInit {
     this.showErrorAlert = false;
     setTimeout(() => {
       this.registroError = null;
-    }, 300); // Small delay to let animation complete
+    }, 300);
   }
 }

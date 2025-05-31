@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-sobre-nosotros',
@@ -7,5 +8,13 @@ import { Component } from '@angular/core';
   styleUrl: './sobre-nosotros.component.css'
 })
 export class SobreNosotrosComponent {
+
+  constructor(
+    private router: Router
+  ) { }
+
+  navigateToCartas() {
+    this.router.navigate(['/cartas']);
+  }
 
 }

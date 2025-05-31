@@ -53,6 +53,7 @@ export class HeaderComponent {
 
   logout(): void {
     sessionStorage.removeItem('token');
+    localStorage.removeItem('carrito');
     this.router.navigate(['/']).then(() => {
       window.location.reload();
     });
