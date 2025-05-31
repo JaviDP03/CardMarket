@@ -14,6 +14,8 @@ export class ProductosAdminComponent implements OnInit {
   productos: Producto[] = [];
   loading: boolean = true;
   showDeleteModal = false;
+  showErrorModal = false;
+  errorMessage = '';
   productToDelete: Producto | null = null;
 
   constructor(
@@ -64,6 +66,8 @@ export class ProductosAdminComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error al eliminar producto:', error);
+          this.errorMessage = 'No se puede eliminar el producto porque probablemente está incluido en uno o más pedidos.';
+          this.showErrorModal = true;
           this.closeDeleteModal();
         }
       });
@@ -73,5 +77,10 @@ export class ProductosAdminComponent implements OnInit {
   closeDeleteModal(): void {
     this.showDeleteModal = false;
     this.productToDelete = null;
+  }
+
+  closeErrorModal(): void {
+    this.showErrorModal = false;
+    this.errorMessage = '';
   }
 }

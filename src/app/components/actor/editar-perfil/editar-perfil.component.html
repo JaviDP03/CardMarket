@@ -1,25 +1,20 @@
 <div class="bg-gray-100 min-h-screen py-8">
   <div class="max-w-4xl mx-auto px-4">
     <div class="bg-white rounded-lg shadow-md overflow-hidden">
-      <!-- Header with background -->
       <div class="bg-gradient-to-r from-blue-500 to-purple-600 h-32 flex items-center p-6">
         <h1 class="text-3xl font-bold text-white">Editar Perfil</h1>
       </div>
 
-      <!-- Loading indicator -->
       <div *ngIf="isLoading" class="flex justify-center items-center p-12">
         <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
 
-      <!-- User not logged in message -->
       <div *ngIf="!isLoading && !currentUser" class="p-8 text-center">
         <p class="text-lg text-gray-600">No has iniciado sesión. Por favor, inicia sesión para editar tu perfil.</p>
       </div>
 
-      <!-- Edit profile form -->
       <div *ngIf="!isLoading && currentUser" class="p-8">
         <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
-          <!-- User avatar and basic info -->
           <div class="flex flex-col md:flex-row items-center md:items-start gap-6 mb-8">
             <div class="flex-shrink-0">
               <div
@@ -48,7 +43,6 @@
             </div>
           </div>
 
-          <!-- Profile information -->
           <div class="border-t pt-6">
             <h3 class="text-xl font-semibold text-gray-800 mb-4">Información Personal</h3>
 
@@ -83,7 +77,6 @@
                 </div>
               </div>
 
-              <!-- Usuario specific fields -->
               <ng-container *ngIf="!isAdmin">
                 <div>
                   <label for="telefono" class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
@@ -100,7 +93,6 @@
               </ng-container>
             </div>
 
-            <!-- Change password section -->
             <div class="mt-8 border-t pt-6">
               <h3 class="text-xl font-semibold text-gray-800 mb-4">Cambiar contraseña</h3>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -128,7 +120,6 @@
               <p class="text-sm text-gray-500 mt-2">Deja estos campos vacíos si no deseas cambiar tu contraseña.</p>
             </div>
 
-            <!-- Address section for regular users -->
             <div *ngIf="!isAdmin" class="mt-8 border-t pt-6">
               <div class="flex justify-between items-center mb-4">
                 <h3 class="text-xl font-semibold text-gray-800">Direcciones</h3>
@@ -192,7 +183,6 @@
             </div>
           </div>
 
-          <!-- Action buttons -->
           <div class="mt-8 flex justify-end space-x-4">
             <button type="button" (click)="cancel()"
               class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-6 rounded-md transition duration-200">
@@ -211,7 +201,6 @@
   </div>
 </div>
 
-<!-- Avatar change modal -->
 <div *ngIf="showAvatarModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
   <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4 shadow-xl">
     <h2 class="text-2xl font-bold text-gray-800 mb-4">Cambiar Avatar</h2>
@@ -233,7 +222,6 @@
       <p class="text-red-700 text-sm">{{ fileError }}</p>
     </div>
 
-    <!-- Loading indicator for base64 conversion -->
     <div *ngIf="isConvertingToBase64" class="flex justify-center items-center mb-4">
       <div class="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-blue-500"></div>
       <span class="ml-2 text-sm text-gray-600">Procesando imagen...</span>

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ProductoService } from '../../../service/producto.service';
 import { Producto } from '../../../model/Producto';
 import { CommonModule } from '@angular/common';
@@ -16,45 +16,50 @@ import { CategoriaService } from '../../../service/categoria.service';
 export class ListarProductosComponent implements OnInit {
   productos: Producto[] = [];
   categoriaActual: string | null = null;
-  loading: boolean = false; // Start with false instead of true
+  loading: boolean = false;
   error: string | null = null;
+  private validCategories = ['cartas', 'colecciones'];
 
   constructor(
     private productoService: ProductoService,
     private categoriaService: CategoriaService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       this.categoriaActual = params.get('nombreCategoria');
+      
+      if (this.categoriaActual && !this.validCategories.includes(this.categoriaActual)) {
+        this.router.navigate(['/notfound']);
+        return;
+      }
+      
       this.loadProductos();
     });
   }
 
   loadProductos(): void {
-    // Reset state
     this.error = null;
     this.productos = [];
     
     if (this.categoriaActual) {
-      this.loading = true; // Only set loading true when we actually load
+      this.loading = true;
       console.log("dos");
-      // Normalize category names
+
       const normalizedCategory = this.categoriaActual
         .replace('cartas', 'carta')
         .replace('colecciones', 'coleccion');
       
-      // First get the category ID, then use it to fetch products
       this.categoriaService.getCategoriaByNombre(normalizedCategory).subscribe({
         next: (categoria) => {
           const idCategoria = categoria.id;
           console.log(idCategoria);
-          // Only fetch products after we have the category ID
           this.productoService.getProductosByCategoria(idCategoria).subscribe({
             next: (data) => {
-              this.productos = data || []; // Ensure productos is never null
-              this.loading = false; // Always stop loading regardless of data length
+              this.productos = data || [];
+              this.loading = false;
             },
             error: (err) => {
               this.error = 'Error al cargar los productos por categoría';
@@ -64,13 +69,11 @@ export class ListarProductosComponent implements OnInit {
           });
         },
         error: (err) => {
-          this.error = 'Error al cargar la categoría';
-          this.loading = false;
-          console.error(err);
+          this.router.navigate(['/404']);
+          console.error('Category not found:', err);
         }
       });
     } else {
-      // No category selected - ensure loading is false
       this.loading = false;
     }
   }

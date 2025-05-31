@@ -119,7 +119,6 @@ export class PerfilComponent implements OnInit {
         const link = document.createElement('a');
         link.href = url;
         
-        // Generate filename with current date
         const currentDate = new Date();
         const dateString = currentDate.toISOString().split('T')[0];
         link.download = `backup_database_${dateString}.sql`;
@@ -158,7 +157,6 @@ export class PerfilComponent implements OnInit {
       next: (response: any) => {
         this.scanningDependencies = false;
         
-        // Create a new window/tab and write the HTML content
         const newWindow = window.open('', '_blank');
         if (newWindow) {
           newWindow.document.write(response);

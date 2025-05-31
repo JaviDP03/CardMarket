@@ -2,13 +2,11 @@
   <div class="container mx-auto px-4 py-3">
     <div class="flex justify-between items-center">
       <div class="flex items-center space-x-4">
-        <!-- Logo -->
         <div class="cursor-pointer" (click)="navigateTo('')">
           <h1 class="font-bold text-2xl hover:text-yellow-300 transition-colors duration-200">CardMarket</h1>
         </div>
       </div>
 
-      <!-- Desktop Navigation - Centered -->
       <nav class="hidden md:flex items-center space-x-6">
         <a class="hover:text-yellow-300 font-medium cursor-pointer transition-colors duration-200 border-b-2 border-transparent hover:border-yellow-300 pb-1"
           (click)="navigateTo('')">Inicio</a>
@@ -18,9 +16,7 @@
           (click)="navigateTo('colecciones')">Colecciones</a>
       </nav>
 
-      <!-- Auth Buttons and Mobile Menu Toggle -->
       <div class="flex items-center space-x-4">
-        <!-- Mobile Menu Button -->
         <button class="md:hidden text-white focus:outline-none"
           (click)="toggleMobileMenu()">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -28,22 +24,18 @@
           </svg>
         </button>
 
-        <!-- User is logged in -->
+        <div class="relative cursor-pointer" (click)="navigateTo('carrito')">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white hover:text-yellow-300 transition-colors duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+          <span *ngIf="cartItemCount > 0" class="absolute -top-2 -right-2 bg-yellow-400 text-purple-900 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+            {{cartItemCount}}
+          </span>
+        </div>
+
         <div *ngIf="isLoggedIn" class="flex items-center space-x-4">
-          <!-- Shopping Cart -->
-          <div class="relative cursor-pointer" (click)="navigateTo('carrito')">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white hover:text-yellow-300 transition-colors duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-            </svg>
-            <span *ngIf="cartItemCount > 0" class="absolute -top-2 -right-2 bg-yellow-400 text-purple-900 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
-              {{cartItemCount}}
-            </span>
-          </div>
-          
-          <!-- User Profile Dropdown -->
           <div class="relative">
             <div class="flex items-center space-x-2 cursor-pointer" (click)="toggleProfileDropdown()">
-              <!-- Profile Picture or Initials -->
               <div class="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center" 
                    [ngClass]="profilePicture ? 'bg-transparent' : 'bg-yellow-400'">
                 <img *ngIf="profilePicture" 
@@ -59,7 +51,6 @@
               </svg>
             </div>
             
-            <!-- Dropdown Menu -->
             <div *ngIf="profileDropdownOpen" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-xl z-20 border border-gray-200">
               <div class="py-1">
                 <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-100 cursor-pointer transition-colors duration-200"
@@ -75,7 +66,6 @@
           </div>
         </div>
 
-        <!-- Auth Buttons (Hidden on small screens when not logged in) -->
         <div *ngIf="!isLoggedIn" class="hidden sm:flex items-center space-x-4">
           <button
             class="bg-yellow-400 hover:bg-yellow-300 text-purple-900 px-4 py-2 rounded-lg font-semibold shadow-md hover:shadow-lg transition-colors duration-200 cursor-pointer"
@@ -89,7 +79,6 @@
           </button>
         </div>
         
-        <!-- Single Auth Button (Only on xs screens when not logged in) -->
         <button *ngIf="!isLoggedIn"
           class="sm:hidden bg-yellow-400 hover:bg-yellow-300 text-purple-900 px-3 py-1 rounded-lg font-medium shadow-md hover:shadow-lg transition-colors duration-200 cursor-pointer"
           (click)="navigateTo('login')">
@@ -98,7 +87,6 @@
       </div>
     </div>
     
-    <!-- Mobile Navigation Menu -->
     <div *ngIf="mobileMenuOpen" class="md:hidden py-3 mt-2">
       <nav class="flex flex-col space-y-3">
         <a class="hover:text-yellow-300 font-medium cursor-pointer transition-colors duration-200 py-2 border-b border-purple-400"
@@ -107,13 +95,12 @@
           (click)="navigateTo('cartas'); toggleMobileMenu()">Cartas</a>
         <a class="hover:text-yellow-300 font-medium cursor-pointer transition-colors duration-200 py-2 border-b border-purple-400"
           (click)="navigateTo('colecciones'); toggleMobileMenu()">Colecciones</a>
+        <a class="hover:text-yellow-300 font-medium cursor-pointer transition-colors duration-200 py-2 border-b border-purple-400"
+          (click)="navigateTo('carrito'); toggleMobileMenu()">Mi Carrito</a>
         
-        <!-- Auth options for mobile menu when user is logged in -->
         <div *ngIf="isLoggedIn" class="pt-2 border-t border-purple-400">
           <a class="hover:text-yellow-300 font-medium cursor-pointer transition-colors duration-200 py-2 border-b border-purple-400"
             (click)="navigateTo('perfil'); toggleMobileMenu()">Mi Perfil</a>
-          <a class="hover:text-yellow-300 font-medium cursor-pointer transition-colors duration-200 py-2 border-b border-purple-400"
-            (click)="navigateTo('carrito'); toggleMobileMenu()">Mi Carrito</a>
           <a class="hover:text-yellow-300 font-medium cursor-pointer transition-colors duration-200 py-2 border-b border-purple-400"
             (click)="logout(); toggleMobileMenu()">Cerrar Sesión</a>
         </div>

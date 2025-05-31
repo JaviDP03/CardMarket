@@ -32,6 +32,7 @@ export const routes: Routes = [
     { path: 'politica', component: PoliticaComponent },
     { path: 'terminos', component: TerminosComponent },
     { path: 'faq', component: FaqComponent },
+    { path: 'notfound', component: NotfoundComponent},
     { path: ':nombreCategoria', component: ListarProductosComponent },
     { path: '', component: HomeComponent },
     { path: '**', component: NotfoundComponent }

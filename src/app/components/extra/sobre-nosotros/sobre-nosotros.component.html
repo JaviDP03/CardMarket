@@ -1,5 +1,4 @@
 <div class="min-h-screen bg-gray-50">
-  <!-- Hero Section -->
   <section class="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-20">
     <div class="container mx-auto px-4 text-center">
       <h1 class="text-4xl md:text-6xl font-bold mb-6">Sobre Nosotros</h1>
@@ -14,7 +13,6 @@
     </div>
   </section>
 
-  <!-- Mission & Vision -->
   <section class="py-16">
     <div class="container mx-auto px-4">
       <div class="grid md:grid-cols-2 gap-12 items-center">
@@ -52,7 +50,6 @@
     </div>
   </section>
 
-  <!-- Team Section -->
   <section class="py-16 bg-white">
     <div class="container mx-auto px-4">
       <div class="text-center mb-12">
@@ -67,33 +64,14 @@
           <div class="w-32 h-32 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full mx-auto mb-4 flex items-center justify-center group-hover:scale-105 transition-transform">
             <span class="text-white text-2xl font-bold">JD</span>
           </div>
-          <h3 class="text-xl font-semibold text-gray-800 mb-2">Juan Díaz</h3>
+          <h3 class="text-xl font-semibold text-gray-800 mb-2">Javier Duarte</h3>
           <p class="text-blue-600 mb-3">Fundador & CEO</p>
           <p class="text-gray-600 text-sm">Coleccionista desde los 8 años, experto en cartas de trading games</p>
-        </div>
-        
-        <div class="text-center group">
-          <div class="w-32 h-32 bg-gradient-to-br from-green-400 to-blue-500 rounded-full mx-auto mb-4 flex items-center justify-center group-hover:scale-105 transition-transform">
-            <span class="text-white text-2xl font-bold">MR</span>
-          </div>
-          <h3 class="text-xl font-semibold text-gray-800 mb-2">María Rodríguez</h3>
-          <p class="text-blue-600 mb-3">Directora de Autenticación</p>
-          <p class="text-gray-600 text-sm">15 años de experiencia verificando la autenticidad de cartas coleccionables</p>
-        </div>
-        
-        <div class="text-center group">
-          <div class="w-32 h-32 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full mx-auto mb-4 flex items-center justify-center group-hover:scale-105 transition-transform">
-            <span class="text-white text-2xl font-bold">CL</span>
-          </div>
-          <h3 class="text-xl font-semibold text-gray-800 mb-2">Carlos López</h3>
-          <p class="text-blue-600 mb-3">Jefe de Tecnología</p>
-          <p class="text-gray-600 text-sm">Desarrollador full-stack especializado en plataformas de e-commerce</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Values Section -->
   <section class="py-16 bg-gray-100">
     <div class="container mx-auto px-4">
       <div class="text-center mb-12">
@@ -144,7 +122,6 @@
     </div>
   </section>
 
-  <!-- CTA Section -->
   <section class="py-16 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
     <div class="container mx-auto px-4 text-center">
       <h2 class="text-3xl font-bold mb-4">¿Listo para unirte a nuestra comunidad?</h2>
@@ -152,11 +129,8 @@
         Descubre miles de cartas auténticas y conecta con coleccionistas de todo el mundo
       </p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <button class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+        <button (click)="navigateToCartas()" class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors cursor-pointer">
           Explorar Cartas
-        </button>
-        <button class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors">
-          Contactar
         </button>
       </div>
     </div>

@@ -49,11 +49,9 @@ export class EditarPerfilComponent {
           this.currentUser = user;
           this.isAdmin = user.rol === 'ADMIN';
           
-          // Load additional user data if needed
           if (this.isAdmin) {
             this.adminService.getAdminById(user.id).subscribe({
               next: (adminData) => {
-                // Merge admin data with current user if needed
                 this.populateForm();
                 this.isLoading = false;
               },
@@ -65,7 +63,6 @@ export class EditarPerfilComponent {
           } else {
             this.usuarioService.getUsuarioById(user.id).subscribe({
               next: (userData) => {
-                // Merge regular user data with current user if needed
                 if (userData) {
                   this.currentUser = { ...this.currentUser, ...userData };
                 }
@@ -105,10 +102,9 @@ export class EditarPerfilComponent {
   }
 
   private passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
-    const password = control.get('password');
+    const password = control.get('contrasenna');
     const confirmPassword = control.get('confirmPassword');
 
-    // Si ambos campos están vacíos, no necesitamos validar
     if ((!password?.value || password.value === '') && 
         (!confirmPassword?.value || confirmPassword.value === '')) {
       return null;
@@ -133,7 +129,6 @@ export class EditarPerfilComponent {
       imagenB64: this.currentUser.imagenB64 || ''
     });
 
-    // Set avatar URL if it exists
     this.imagenB64 = this.currentUser.imagenB64 || null;
 
     if (!this.isAdmin) {
@@ -143,9 +138,7 @@ export class EditarPerfilComponent {
           new Date(this.currentUser.fechaNacimiento).toISOString().split('T')[0] : ''
       });
 
-      // Cargar direcciones
       if (this.currentUser.direcciones && this.currentUser.direcciones.length > 0) {
-        // Clear existing array items first
         while (this.direcciones.length) {
           this.direcciones.removeAt(0);
         }
@@ -156,7 +149,6 @@ export class EditarPerfilComponent {
       }
     }
     
-    // Ensure loading state is cleared when form is populated
     this.isLoading = false;
   }
 
@@ -188,16 +180,12 @@ export class EditarPerfilComponent {
     this.isSubmitting = true;
     const formData = { ...this.profileForm.value };
     
-    // Si no se está cambiando la contraseña, eliminar los campos relacionados
     if (!formData.password || formData.password.trim() === '') {
       delete formData.password;
       delete formData.confirmPassword;
     } else {
-      delete formData.confirmPassword; // No enviar la confirmación
+      delete formData.confirmPassword;
     }
-
-    // Avatar URL is now part of the form, no need for separate logic
-    // Remove the manual avatar addition since it's now in the form
     
     const updateMethod = this.isAdmin ? 
       this.adminService.updateAdmin(formData) : 
@@ -211,7 +199,6 @@ export class EditarPerfilComponent {
       error: (error) => {
         console.error('Error updating profile:', error);
         this.isSubmitting = false;
-        // Aquí podrías agregar un mensaje de error para mostrar al usuario
       }
     });
   }
