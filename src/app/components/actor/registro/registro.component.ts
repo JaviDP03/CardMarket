@@ -94,7 +94,17 @@ export class RegistroComponent implements OnInit {
 
       this.adminService.createAdmin(admin).subscribe({
         next: (response) => {
-          this.router.navigate(['/login']);
+          if (response) {
+            this.router.navigate(['/login']);
+          } else {
+            this.registroError = 'Error al registrar administrador. El usuario ya existe o hay datos inválidos.';
+            this.showErrorAlert = true;
+            
+            // Auto dismiss after 5 seconds
+            setTimeout(() => {
+              this.dismissError();
+            }, 5000);
+          }
         },
         error: (error) => {
           console.error('Error al registrar admin:', error);
@@ -114,7 +124,17 @@ export class RegistroComponent implements OnInit {
 
       this.usuarioService.createUsuario(usuario).subscribe({
         next: (response) => {
-          this.router.navigate(['/login']);
+          if (response) {
+            this.router.navigate(['/login']);
+          } else {
+            this.registroError = 'Error al registrar usuario. El usuario ya existe o hay datos inválidos.';
+            this.showErrorAlert = true;
+            
+            // Auto dismiss after 5 seconds
+            setTimeout(() => {
+              this.dismissError();
+            }, 5000);
+          }
         },
         error: (error) => {
           console.error('Error al registrar usuario:', error);
