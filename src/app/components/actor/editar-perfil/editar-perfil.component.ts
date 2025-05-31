@@ -97,7 +97,7 @@ export class EditarPerfilComponent {
       email: ['', [Validators.required, Validators.email]],
       telefono: [''],
       fechaNacimiento: [''],
-      password: ['', [Validators.minLength(6)]],
+      contrasenna: ['', [Validators.minLength(6)]],
       confirmPassword: [''],
       imagenB64: [''],
       direcciones: this.fb.array([])
@@ -189,7 +189,7 @@ export class EditarPerfilComponent {
     const formData = { ...this.profileForm.value };
     
     // Si no se está cambiando la contraseña, eliminar los campos relacionados
-    if (!formData.password) {
+    if (!formData.password || formData.password.trim() === '') {
       delete formData.password;
       delete formData.confirmPassword;
     } else {

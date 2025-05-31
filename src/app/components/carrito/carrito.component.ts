@@ -22,6 +22,7 @@ export class CarritoComponent implements OnInit {
   isLoading = false;
   currentUser: Usuario | null = null;
   showSuccessModal = false;
+  stockWarning: string | null = null;
 
   constructor(
     private actorService: ActorService,
@@ -96,10 +97,27 @@ export class CarritoComponent implements OnInit {
   updateQuantity(productId: number, change: number) {
     const item = this.cartItems.find(item => item.producto.id === productId);
     if (item) {
-      const newQuantity = Math.max(1, item.cantidad + change);
+      const newQuantity = item.cantidad + change;
+      
+      // Check minimum quantity
+      if (newQuantity < 1) {
+        return;
+      }
+      
+      // Check stock availability
+      if (newQuantity > item.producto.stock) {
+        this.stockWarning = `Solo hay ${item.producto.stock} unidades disponibles de ${item.producto.nombre}`;
+        // Clear warning after 3 seconds
+        setTimeout(() => {
+          this.stockWarning = null;
+        }, 3000);
+        return;
+      }
+      
       item.cantidad = newQuantity;
       item.total = item.producto.precio * newQuantity;
       this.saveCartToLocalStorage();
+      this.stockWarning = null;
     }
   }
 

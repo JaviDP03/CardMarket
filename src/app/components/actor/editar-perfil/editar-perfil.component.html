@@ -106,9 +106,9 @@
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Nueva contraseña</label>
-                  <input type="password" id="password" formControlName="password"
+                  <input type="password" id="password" formControlName="contrasenna"
                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                  <div *ngIf="profileForm.get('password')?.touched && profileForm.get('password')?.errors"
+                  <div *ngIf="profileForm.get('contrasenna')?.touched && profileForm.get('contrasenna')?.errors"
                     class="text-red-500 text-sm mt-1">
                     La contraseña debe tener al menos 6 caracteres
                   </div>

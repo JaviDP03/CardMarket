@@ -35,4 +35,8 @@ export class AdminService {
   backupDatabase(): Observable<any> {
     return this.http.get(`${this.apiUrl}/backupbd`);
   }
+
+  generateDependencyReport(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/dependency-check-report`, { responseType: 'text' });
+  }
 }

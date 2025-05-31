@@ -22,11 +22,13 @@ export class DetallesProductoComponent implements OnInit {
   cantidad: number = 1;
   isLoggedIn: boolean = false;
   usuarioId: number | null = null;
+  isAdmin: boolean = false;
   usuarioValoracion: Usuario | null = null;
   nuevaValoracion: Valoracion = new Valoracion(0, '', new Date());
   usuarioTieneValoracion: boolean = false;
   valoracionesUsuario: Valoracion[] = [];
   usuariosValoraciones: Map<number, Usuario> = new Map();
+  mediaPuntuacion: number = 0;
 
   // Propiedades del modal
   mostrarModal: boolean = false;
@@ -57,10 +59,12 @@ export class DetallesProductoComponent implements OnInit {
       next: (response) => {
         this.isLoggedIn = true;
         this.usuarioId = response.id;
+        this.isAdmin = response.rol === 'ADMIN';
         this.cargarValoracionesUsuario();
       },
       error: (error) => {
         this.isLoggedIn = false;
+        this.isAdmin = false;
         console.log('Usuario no logueado');
       }
     });
@@ -89,6 +93,7 @@ export class DetallesProductoComponent implements OnInit {
       this.productoService.getProductoById(id).subscribe({
         next: (producto) => {
           this.producto = producto;
+          this.calcularMediaPuntuacion();
           this.cargarUsuariosValoraciones();
           // Solo verificar si ya tenemos las valoraciones del usuario cargadas
           if (this.isLoggedIn && this.valoracionesUsuario.length > 0) {
@@ -132,6 +137,12 @@ export class DetallesProductoComponent implements OnInit {
       console.log('Valoraciones del usuario:', this.valoracionesUsuario);
       console.log('Valoraciones del producto:', this.producto?.valoraciones);
       console.log('Usuario tiene valoración:', this.usuarioTieneValoracion);
+      
+      // Debug adicional para cada valoración
+      this.valoracionesUsuario.forEach(userVal => {
+        const encontrada = this.producto?.valoraciones?.find(prodVal => prodVal.id === userVal.id);
+        console.log(`Valoración usuario ${userVal.id} encontrada en producto:`, encontrada);
+      });
     }
   }
 
@@ -148,6 +159,12 @@ export class DetallesProductoComponent implements OnInit {
   }
 
   agregarAlCarrito(): void {
+    // Prevenir que admins añadan al carrito
+    if (this.isAdmin) {
+      this.mostrarModalError('Acción no permitida', 'Los administradores no pueden añadir productos al carrito.');
+      return;
+    }
+
     if (this.producto) {
       if (!localStorage.getItem('carrito')) {
         localStorage.setItem('carrito', JSON.stringify([]));
@@ -188,6 +205,12 @@ export class DetallesProductoComponent implements OnInit {
   }
 
   enviarValoracion(): void {
+    // Prevenir que admins dejen valoraciones
+    if (this.isAdmin) {
+      this.mostrarModalError('Acción no permitida', 'Los administradores no pueden dejar valoraciones.');
+      return;
+    }
+
     if (!this.isLoggedIn || !this.producto || this.usuarioTieneValoracion) {
       return;
     }
@@ -216,6 +239,19 @@ export class DetallesProductoComponent implements OnInit {
   }
 
   eliminarValoracion(id: number): void {
+    // Verificar si el usuario puede eliminar esta valoración
+    const valoracion = this.producto?.valoraciones?.find(v => v.id === id);
+    if (!valoracion) {
+      this.mostrarModalError('Error', 'Valoración no encontrada.');
+      return;
+    }
+
+    // Los admins pueden eliminar cualquier valoración, los usuarios solo sus propias valoraciones
+    if (!this.isAdmin && !this.esValoracionDelUsuario(valoracion)) {
+      this.mostrarModalError('Acción no permitida', 'Solo puedes eliminar tus propias valoraciones.');
+      return;
+    }
+
     this.valoracionIdParaEliminar = id;
     this.mostrarModalEliminar = true;
   }
@@ -312,19 +348,52 @@ export class DetallesProductoComponent implements OnInit {
 
   esValoracionDelUsuario(valoracion: Valoracion): boolean {
     if (!this.isLoggedIn || !this.usuarioId) {
+      console.log('Usuario no logueado');
       return false;
     }
     
-    // Verificar si la valoración pertenece al usuario actual
-    return this.valoracionesUsuario.some(v => v.id === valoracion.id);
+    // Debug logging
+    console.log('Verificando valoración ID:', valoracion.id);
+    console.log('Valoraciones del usuario:', this.valoracionesUsuario.map(v => v.id));
+    
+    // Para usuarios normales, verificar si la valoración pertenece al usuario actual
+    const esDelUsuario = this.valoracionesUsuario.some(v => v.id === valoracion.id);
+    console.log('Es valoración del usuario:', esDelUsuario);
+    
+    return esDelUsuario;
   }
 
   // Método auxiliar para generar arrays para las estrellas
   array(n: number): any[] {
     return Array(n);
   }
-}
-function registerLocaleData(localeEs: (string | number | number[] | (string | undefined)[] | ((val: number) => number) | (string[] | undefined)[] | { AUD: (string | undefined)[]; BRL: (string | undefined)[]; BYN: (string | undefined)[]; CAD: (string | undefined)[]; CNY: (string | undefined)[]; EGP: never[]; ESP: string[]; GBP: (string | undefined)[]; HKD: (string | undefined)[]; ILS: (string | undefined)[]; INR: (string | undefined)[]; JPY: (string | undefined)[]; KRW: (string | undefined)[]; MXN: (string | undefined)[]; NZD: (string | undefined)[]; PHP: (string | undefined)[]; RON: (string | undefined)[]; THB: string[]; TWD: (string | undefined)[]; USD: string[]; XAF: never[]; XCD: (string | undefined)[]; XOF: never[]; } | undefined)[]) {
-  throw new Error('Function not implemented.');
-}
 
+  // Método para obtener el usuario de una valoración específica
+  getUsuarioValoracion(valoracionId: number): Usuario | null {
+    return this.usuariosValoraciones.get(valoracionId) || null;
+  }
+
+  // Método para calcular la media de puntuación
+  private calcularMediaPuntuacion(): void {
+    if (this.producto?.valoraciones && this.producto.valoraciones.length > 0) {
+      const suma = this.producto.valoraciones.reduce((total, valoracion) => total + valoracion.puntuacion, 0);
+      this.mediaPuntuacion = suma / this.producto.valoraciones.length;
+    } else {
+      this.mediaPuntuacion = 0;
+    }
+  }
+
+  // Método para obtener array de estrellas según la media
+  getEstrellasPuntuacion(): { completas: number[], medias: number[], vacias: number[] } {
+    const puntuacionRedondeada = Math.round(this.mediaPuntuacion * 2) / 2; // Redondear a 0.5
+    const estrellasCompletas = Math.floor(puntuacionRedondeada);
+    const tieneMedia = puntuacionRedondeada % 1 !== 0;
+    const estrellasVacias = 5 - estrellasCompletas - (tieneMedia ? 1 : 0);
+
+    return {
+      completas: Array(estrellasCompletas).fill(0),
+      medias: tieneMedia ? [1] : [],
+      vacias: Array(estrellasVacias).fill(0)
+    };
+  }
+}
