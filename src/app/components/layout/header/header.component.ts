@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, HostListener, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
+import { ActorService } from '../../../service/actor.service';
 
 @Component({
   selector: 'app-header',
@@ -21,14 +22,15 @@ export class HeaderComponent {
 
   constructor(
     private router: Router,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private actorService: ActorService
   ) {
      if (this.token !== null && this.token) {
       this.isLoggedIn = true;
       const decodedToken: any = jwtDecode(this.token);
       this.username = decodedToken.sub;
       this.userInitials = this.getUserInitials(this.username);
-      this.profilePicture = decodedToken.profilePicture || null;
+      this.loadUserProfile();
     }
   }
 
@@ -59,6 +61,18 @@ export class HeaderComponent {
     });
   }
 
+  private loadUserProfile(): void {
+    this.actorService.userLogin().subscribe({
+      next: (user) => {
+        this.profilePicture = this.getProfilePictureUrl(user.imagenB64);
+      },
+      error: (error) => {
+        console.error('Error loading user profile:', error);
+        this.profilePicture = null;
+      }
+    });
+  }
+
   private getUserInitials(name: string): string {
     if (!name) return 'U';
     
@@ -68,5 +82,15 @@ export class HeaderComponent {
     }
     
     return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+  }
+
+  private getProfilePictureUrl(profilePicture: string | null): string | null {
+    if (profilePicture) {
+      if (profilePicture.startsWith('http') || profilePicture.startsWith('data:')) {
+        return profilePicture;
+      }
+      return `data:image/jpeg;base64,${profilePicture}`;
+    }
+    return null;
   }
 }

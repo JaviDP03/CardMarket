@@ -36,12 +36,11 @@
         <div *ngIf="isLoggedIn" class="flex items-center space-x-4">
           <div class="relative">
             <div class="flex items-center space-x-2 cursor-pointer" (click)="toggleProfileDropdown()">
-              <div class="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center" 
-                   [ngClass]="profilePicture ? 'bg-transparent' : 'bg-yellow-400'">
+              <div class="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-yellow-400">
                 <img *ngIf="profilePicture" 
-                     [src]="'data:image/jpeg;base64,' + profilePicture" 
+                     [src]="profilePicture" 
                      alt="Profile Picture"
-                     class="w-full h-full object-cover rounded-full">
+                     class="w-full h-full object-cover">
                 <span *ngIf="!profilePicture" 
                       class="text-purple-900 font-bold">{{userInitials}}</span>
               </div>
