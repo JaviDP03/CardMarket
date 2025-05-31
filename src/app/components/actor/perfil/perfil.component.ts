@@ -8,6 +8,7 @@ import { Usuario } from '../../../model/Usuario';
 import { ActorService } from '../../../service/actor.service';
 import { Router } from '@angular/router';
 import { AdminService } from '../../../service/admin.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-perfil',
@@ -30,6 +31,9 @@ export class PerfilComponent implements OnInit {
   backupLoading: boolean = false;
   backupFile: Blob | null = null;
   backupError: string | null = null;
+
+  // Dependency scanning properties
+  scanningDependencies: boolean = false;
 
   constructor(
     private actorService: ActorService,
@@ -92,7 +96,7 @@ export class PerfilComponent implements OnInit {
       'Content-Type': 'application/json'
     };
 
-    this.http.get('http://localhost:8080/admin/backupbd', {
+    this.http.get(`${environment.apiUrl}/admin/backupbd`, {
       headers: headers,
       responseType: 'blob'
     }).subscribe({
@@ -145,5 +149,30 @@ export class PerfilComponent implements OnInit {
 
   retryBackup() {
     this.backupDatabase();
+  }
+
+  scanDependencies() {
+    this.scanningDependencies = true;
+
+    this.adminService.generateDependencyReport().subscribe({
+      next: (response: any) => {
+        this.scanningDependencies = false;
+        
+        // Create a new window/tab and write the HTML content
+        const newWindow = window.open('', '_blank');
+        if (newWindow) {
+          newWindow.document.write(response);
+          newWindow.document.close();
+        } else {
+          console.error('No se pudo abrir una nueva pestaña. Verifique que los pop-ups estén permitidos.');
+          alert('No se pudo abrir una nueva pestaña. Verifique que los pop-ups estén permitidos.');
+        }
+      },
+      error: (error) => {
+        console.error('Error al generar el reporte de dependencias:', error);
+        this.scanningDependencies = false;
+        alert('Error al generar el reporte de dependencias. Intente nuevamente.');
+      }
+    });
   }
 }

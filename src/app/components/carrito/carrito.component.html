@@ -30,6 +30,16 @@
       </p>
     </div>
 
+    <!-- Stock warning -->
+    <div *ngIf="stockWarning" class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+      <div class="flex items-center space-x-3">
+        <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.98-.833-2.75 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+        </svg>
+        <p class="text-red-800">{{stockWarning}}</p>
+      </div>
+    </div>
+
     <!-- Cart content - show even if not logged in to display cart items -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <!-- Cart Items -->
@@ -57,6 +67,7 @@
               <div class="flex-1">
                 <h3 class="text-lg font-medium text-gray-900">{{item.producto.nombre}}</h3>
                 <p class="text-lg font-semibold text-blue-600 mt-1">{{item.producto.precio | currency:'EUR':'symbol':'1.2-2'}}</p>
+                <p class="text-sm text-gray-500">Stock disponible: {{item.producto.stock}}</p>
               </div>
 
               <div class="flex items-center space-x-3">
@@ -66,7 +77,8 @@
                 </button>
                 <span class="w-8 text-center font-medium">{{item.cantidad}}</span>
                 <button (click)="updateQuantity(item.producto.id, 1)"
-                        class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50">
+                        [disabled]="item.cantidad >= item.producto.stock"
+                        class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 disabled:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50">
                   <span class="text-gray-600">+</span>
                 </button>
               </div>
@@ -94,16 +106,15 @@
           <!-- No addresses message -->
           <div *ngIf="direcciones.length === 0" class="text-center py-6">
             <svg class="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
             </svg>
-            <h4 class="text-lg font-medium text-gray-900 mb-2">No tienes direcciones guardadas</h4>
-            <p class="text-gray-600 mb-4">Agrega una dirección para poder realizar pedidos</p>
+            <p class="text-gray-600 mb-4">No tienes direcciones guardadas</p>
             <button (click)="agregarDireccion()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-              Agregar dirección
+              Agregar Dirección
             </button>
           </div>
-
+          
           <!-- Addresses list -->
           <div class="space-y-3" *ngIf="direcciones.length > 0">
             <div *ngFor="let direccion of direcciones" 
