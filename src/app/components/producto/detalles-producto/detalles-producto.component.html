@@ -12,9 +12,19 @@
         <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ producto.nombre }}</h1>
         <div class="flex items-center mb-4">
           <div class="flex text-yellow-400">
-            <span *ngFor="let _ of [1,2,3,4,5]" class="text-xl">★</span>
+            <!-- Estrellas completas -->
+            <span *ngFor="let _ of getEstrellasPuntuacion().completas" class="text-xl">★</span>
+            <!-- Estrellas medias -->
+            <span *ngFor="let _ of getEstrellasPuntuacion().medias" class="text-xl relative">
+              <span class="absolute inset-0 overflow-hidden w-1/2 text-yellow-400">★</span>
+              <span class="text-gray-300">★</span>
+            </span>
+            <!-- Estrellas vacías -->
+            <span *ngFor="let _ of getEstrellasPuntuacion().vacias" class="text-xl text-gray-300">★</span>
           </div>
-          <span class="text-gray-500 ml-2">({{ producto.valoraciones.length || 0 }} valoraciones)</span>
+          <span class="text-gray-500 ml-2">
+            {{ mediaPuntuacion > 0 ? ('(' + mediaPuntuacion.toFixed(1) + '/5 - ' + producto.valoraciones.length + ' valoraciones)') : '(Sin valoraciones)' }}
+          </span>
         </div>
         <p class="text-gray-600 mb-4">{{ producto.descripcion }}</p>
         <div class="mb-4">
@@ -23,7 +33,7 @@
         <div class="mb-4">
           <p class="text-gray-700 mb-2">Categoría: <span class="font-semibold">{{ producto.categoria.nombre }}</span></p>
         </div>
-        <div class="flex items-center gap-6">
+        <div class="flex items-center gap-6" *ngIf="!isAdmin">
           <div class="flex items-center">
             <button (click)="decrementarCantidad()" class="bg-gray-200 text-gray-700 px-3 py-1 rounded-l">-</button>
             <input 
@@ -46,6 +56,12 @@
             <span class="text-red-600" *ngIf="producto?.stock === 0">Sin stock</span>
           </div>
         </div>
+
+        <!-- Mensaje para administradores -->
+        <div *ngIf="isAdmin" class="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+          <p class="text-yellow-800 font-medium">Vista de administrador</p>
+          <p class="text-yellow-700 text-sm">Como administrador, puedes ver la información del producto pero no realizar compras.</p>
+        </div>
       </div>
     </div>
   </div>
@@ -55,7 +71,7 @@
     <h2 class="text-2xl font-bold text-gray-900 mb-6">Valoraciones</h2>
 
     <!-- Añadir valoración -->
-    <div *ngIf="isLoggedIn && !usuarioTieneValoracion" class="mb-8 bg-gray-50 p-4 rounded-lg">
+    <div *ngIf="isLoggedIn && !usuarioTieneValoracion && !isAdmin" class="mb-8 bg-gray-50 p-4 rounded-lg">
       <h3 class="text-lg font-semibold mb-3">Añadir tu valoración</h3>
       <div class="flex items-center mb-3">
         <span class="mr-2">Puntuación:</span>
@@ -86,7 +102,7 @@
       </button>
     </div>
 
-    <div *ngIf="isLoggedIn && usuarioTieneValoracion" class="mb-6 p-4 bg-blue-50 rounded-lg text-center">
+    <div *ngIf="isLoggedIn && usuarioTieneValoracion && !isAdmin" class="mb-6 p-4 bg-blue-50 rounded-lg text-center">
       <p class="text-blue-800">Ya has valorado este producto</p>
     </div>
 
@@ -97,6 +113,11 @@
       </button>
     </div>
 
+    <!-- Mensaje para administradores en la sección de valoraciones -->
+    <div *ngIf="isLoggedIn && isAdmin" class="mb-6 p-4 bg-orange-50 rounded-lg text-center">
+      <p class="text-orange-800">Como administrador, no puedes dejar valoraciones en los productos.</p>
+    </div>
+
     <!-- Lista de valoraciones -->
     <div *ngIf="producto?.valoraciones?.length" class="space-y-6">
       <div *ngFor="let valoracion of producto?.valoraciones" class="border-b border-gray-200 pb-6 last:border-0">
@@ -104,25 +125,25 @@
           <div class="flex items-center">
             <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center mr-3 overflow-hidden">
               <img 
-                *ngIf="usuarioValoracion?.imagenB64" 
-                [src]="'data:image/jpeg;base64,' + usuarioValoracion?.imagenB64" 
-                [alt]="usuarioValoracion?.nombre"
+                *ngIf="getUsuarioValoracion(valoracion.id)?.imagenB64" 
+                [src]="'data:image/jpeg;base64,' + getUsuarioValoracion(valoracion.id)?.imagenB64" 
+                [alt]="getUsuarioValoracion(valoracion.id)?.nombre"
                 class="w-full h-full object-cover">
               <span 
-                *ngIf="!usuarioValoracion?.imagenB64" 
+                *ngIf="!getUsuarioValoracion(valoracion.id)?.imagenB64" 
                 class="font-bold text-indigo-800">
-                {{ usuarioValoracion?.nombre?.charAt(0) || 'U' }}
+                {{ getUsuarioValoracion(valoracion.id)?.nombre?.charAt(0) || 'U' }}
               </span>
             </div>
             <div>
-              <p class="font-semibold">{{ usuarioValoracion?.nombre || 'Usuario' }}</p>
+              <p class="font-semibold">{{ getUsuarioValoracion(valoracion.id)?.nombre || 'Usuario' }}</p>
               <div class="flex text-yellow-400">
                 <span *ngFor="let _ of array(valoracion.puntuacion)">★</span>
                 <span *ngFor="let _ of array(5 - valoracion.puntuacion)" class="text-gray-300">★</span>
               </div>
             </div>
           </div>
-          <div *ngIf="esValoracionDelUsuario(valoracion)">
+          <div *ngIf="esValoracionDelUsuario(valoracion) || isAdmin">
             <button 
               (click)="eliminarValoracion(valoracion.id)" 
               class="text-red-600 hover:text-red-800 px-2 py-1 rounded hover:bg-red-50">

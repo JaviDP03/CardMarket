@@ -22,7 +22,7 @@ export class ValoracionService {
   }
 
   getValoracionesByUsuario(): Observable<Valoracion[]> {
-    return this.http.get<Valoracion[]>(`${this.apiUrl}/usuario`);
+    return this.http.get<Valoracion[]>(`${this.apiUrl}/valoraciones/usuario`);
   }
 
   getValoracionById(id: number): Observable<Valoracion> {
